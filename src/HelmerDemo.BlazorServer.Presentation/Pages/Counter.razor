@@ -1,0 +1,24 @@
+﻿@page "/counter"
+@inherits CounterComponent
+
+@{
+	this.MaxValue = 20;
+}
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p>This demonstrates the use of <code>InvokeAsync</code> to update the frontend from an event in the Razor codebehind.</p>
+
+@if (CurrentCount >= MaxValue)
+{
+	<p role="status" class="@ErrorStyle">@ErrorMessage</p>
+}
+<p role="status" class="@ErrorStyle">Current count: @CurrentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<h2>Resources</h2>
+
+<a href="https://swimburger.net/blog/dotnet/pushing-ui-changes-from-blazor-server-to-browser-on-server-raised-events" title="Pushing UI changes from Blazor Server to browser on server raised events">Pushing UI changes from Blazor Server to browser on server raised events</a>

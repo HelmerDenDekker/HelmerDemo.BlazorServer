@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelmerDemo.BlazorServer.Application", "HelmerDemo.BlazorServer.Application\HelmerDemo.BlazorServer.Application.csproj", "{9F502631-C640-4C91-9974-7132170E62E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelmerDemo.BlazorServer.Presentation", "HelmerDemo.BlazorServer.Presentation\HelmerDemo.BlazorServer.Presentation.csproj", "{B8265AB0-FCFE-4281-87DA-611D50EF3BB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelmerDemo.BlazorServer.Shared.Tools", "HelmerDemo.BlazorServer.Shared.Tools\HelmerDemo.BlazorServer.Shared.Tools.csproj", "{1071F166-FE2F-4748-A733-02E7EFD9DF13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelmerDemo.BlazorServer.Application.UnitTests", "Tests\HelmerDemo.BlazorServer.Application.UnitTests\HelmerDemo.BlazorServer.Application.UnitTests.csproj", "{29FE0C6E-45A7-4428-B3EC-2EDEED92EB44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{77CE0620-7F31-4536-8527-B6B4C3974465}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F502631-C640-4C91-9974-7132170E62E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F502631-C640-4C91-9974-7132170E62E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F502631-C640-4C91-9974-7132170E62E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F502631-C640-4C91-9974-7132170E62E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8265AB0-FCFE-4281-87DA-611D50EF3BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8265AB0-FCFE-4281-87DA-611D50EF3BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8265AB0-FCFE-4281-87DA-611D50EF3BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8265AB0-FCFE-4281-87DA-611D50EF3BB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1071F166-FE2F-4748-A733-02E7EFD9DF13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1071F166-FE2F-4748-A733-02E7EFD9DF13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1071F166-FE2F-4748-A733-02E7EFD9DF13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1071F166-FE2F-4748-A733-02E7EFD9DF13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29FE0C6E-45A7-4428-B3EC-2EDEED92EB44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29FE0C6E-45A7-4428-B3EC-2EDEED92EB44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29FE0C6E-45A7-4428-B3EC-2EDEED92EB44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29FE0C6E-45A7-4428-B3EC-2EDEED92EB44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{29FE0C6E-45A7-4428-B3EC-2EDEED92EB44} = {77CE0620-7F31-4536-8527-B6B4C3974465}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4352E5C0-A1AD-455A-B09E-BE344FE9FFA1}
+	EndGlobalSection
+EndGlobal
