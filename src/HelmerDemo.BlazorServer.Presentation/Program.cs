@@ -1,5 +1,5 @@
-using HelmerDemo.BlazorServer.Application.Events;
-using HelmerDemo.BlazorServer.Application.Services;
+using HelmerDemo.BlazorServer.Application.Handlers;
+using HelmerDemo.BlazorServer.Application.Providers;
 using HelmerDemo.BlazorServer.Shared.Tools.Models;
 using Serilog;
 
@@ -14,9 +14,9 @@ static void AddServices(WebApplicationBuilder builder)
 	var corsSettings = new CorsSettings();
 	builder.Configuration.GetSection("CorsSettings").Bind(corsSettings);
 
-	builder.Services.AddSingleton<ITimeTimer, TimeTimer>();
+	builder.Services.AddSingleton<ITimeHandler, TimeHandler>();
 	builder.Services.AddSingleton<WeatherForecastService>();
-	builder.Services.AddSingleton<IClockService, ClockService>();
+	builder.Services.AddSingleton<IClockProvider, ClockProvider>();
 	// Add services to the container.
 	builder.Services.AddRazorPages();
 	builder.Services.AddServerSideBlazor();

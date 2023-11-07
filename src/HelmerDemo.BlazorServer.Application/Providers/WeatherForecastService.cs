@@ -1,6 +1,6 @@
 using HelmerDemo.BlazorServer.Application.Domain;
 
-namespace HelmerDemo.BlazorServer.Application.Services
+namespace HelmerDemo.BlazorServer.Application.Providers
 {
 	public class WeatherForecastService
 	{

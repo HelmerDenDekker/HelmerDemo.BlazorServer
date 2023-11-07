@@ -1,5 +1,5 @@
 ﻿using HelmerDemo.BlazorServer.Application.Domain;
-using HelmerDemo.BlazorServer.Application.Services;
+using HelmerDemo.BlazorServer.Application.Providers;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages

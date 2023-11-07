@@ -1,17 +1,17 @@
 ﻿using HelmerDemo.BlazorServer.Application.Domain;
-using HelmerDemo.BlazorServer.Application.Events;
+using HelmerDemo.BlazorServer.Application.Handlers;
 
-namespace HelmerDemo.BlazorServer.Application.Services
+namespace HelmerDemo.BlazorServer.Application.Providers
 {
-    public class ClockService : IClockService
+    public class ClockProvider : IClockProvider
     {
-        private readonly ITimeTimer _timeTimer;
+        private readonly ITimeHandler _timeTimer;
 
 		/// <summary>
-		/// Initializes a new <see cref="ClockService"/>
+		/// Initializes a new <see cref="ClockProvider"/>
 		/// </summary>
 		/// <param name="timeTimer">The Timer event</param>
-		public ClockService(ITimeTimer timeTimer)
+		public ClockProvider(ITimeHandler timeTimer)
         {
             _timeTimer = timeTimer;
         }
@@ -20,14 +20,10 @@ namespace HelmerDemo.BlazorServer.Application.Services
 		public async Task<DigitalTime> StartClock()
         {
             // start
-            var time = DateTime.Now;
-            var hours = time.Hour;
-            var minutes = time.Minute;
-            var seconds = time.Second;
-            var newTime = new DigitalTime(hours, minutes, seconds);
+            var currentTime = new DigitalTime(DateTime.Now);
 
-            await AddSecond(newTime);
-            return newTime;
+            await AddSecond(currentTime);
+            return currentTime;
         }
 
         /// <summary>
@@ -38,12 +34,11 @@ namespace HelmerDemo.BlazorServer.Application.Services
         private async Task AddSecond(DigitalTime time)
         {
             var second = Task.Delay(1000);
-            var newTime = new DigitalTime(time.Hours, time.Minutes, time.Seconds + 1);
-			var displayTime = new DigitalClock(newTime);
+            var updatedTime = time.AddSecond();
             await second;
             //raise the Timer event to let the UI know it is time to update (loose coupling)
-            _timeTimer.RaiseTimeUpdate(displayTime);
-            await AddSecond(newTime);
+            _timeTimer.RaiseTimeUpdate(updatedTime);
+            await AddSecond(updatedTime);
         }
 
 		
