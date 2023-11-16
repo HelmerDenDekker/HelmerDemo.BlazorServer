@@ -1,35 +1,34 @@
-﻿namespace HelmerDemo.BlazorServer.Shared.Tools.Extensions
+﻿namespace HelmerDemo.BlazorServer.Shared.Tools.Extensions;
+
+public static class DateTimeExtensions
 {
-    public static class DateTimeExtensions
+    /// <summary>
+    /// Set the DateTime to the Utc kind
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static DateTime? SetKindUtc(this DateTime? dateTime)
     {
-        /// <summary>
-        /// Set the DateTime to the Utc kind
-        /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
-        public static DateTime? SetKindUtc(this DateTime? dateTime)
+        if (dateTime.HasValue)
         {
-            if (dateTime.HasValue)
-            {
-                return dateTime.Value.SetKindUtc();
-            }
-
-            return null;
+            return dateTime.Value.SetKindUtc();
         }
 
-        /// <summary>
-        /// Set the DateTime to the Utc kind
-        /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
-        public static DateTime SetKindUtc(this DateTime dateTime)
-        {
-            if (dateTime.Kind == DateTimeKind.Utc)
-            {
-                return dateTime;
-            }
+        return null;
+    }
 
-            return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+    /// <summary>
+    /// Set the DateTime to the Utc kind
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static DateTime SetKindUtc(this DateTime dateTime)
+    {
+        if (dateTime.Kind == DateTimeKind.Utc)
+        {
+            return dateTime;
         }
+
+        return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
     }
 }

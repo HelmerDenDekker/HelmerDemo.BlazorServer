@@ -1,12 +1,11 @@
 ﻿using System.Timers;
+using HelmerDemo.BlazorServer.Application.Handlers;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
-public partial class Counter: ComponentBase, IDisposable
+public partial class CounterRx: ComponentBase, IDisposable
 {
-	private System.Timers.Timer _timer;
-
 	/// <summary>
 	/// Buffer to keep track of count
 	/// </summary>
@@ -27,6 +26,8 @@ public partial class Counter: ComponentBase, IDisposable
 	/// </summary>
 	protected string ErrorMessage = "You hit the maximum value";
 
+	private IDisposable _subscription;
+
 	/// <summary>
 	/// Add 1 to the count, until max value
 	/// </summary>
@@ -37,10 +38,8 @@ public partial class Counter: ComponentBase, IDisposable
 		else
 		{
 			ErrorStyle = "text-danger";
-			//Stop timer and finish the events 
-			_timer.Enabled = false;
-			_timer.Elapsed -= TimerIntervalListener;
-			_timer.Dispose();
+			//Finish the events
+			Dispose();
 		}
 	}
 
@@ -52,13 +51,12 @@ public partial class Counter: ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			_timer = new System.Timers.Timer();
-			_timer.Interval = 1000;
-			// Subscribe to the listener
-			_timer.Elapsed += TimerIntervalListener;
-			_timer.AutoReset = true;
-			// Start the timer
-			_timer.Enabled = true;
+			var eventDemo = new CounterSubject();
+			var observable = eventDemo.Start(MaxValue);
+			_subscription = observable.Subscribe(
+				p => TimerIntervalListener(),
+				e => OnError(e.Message),
+				() => OnFinished());
 		}
 		base.OnAfterRender(firstRender);
 	}
@@ -69,7 +67,7 @@ public partial class Counter: ComponentBase, IDisposable
 	/// </summary>
 	public void Dispose()
 	{
-		_timer?.Dispose();
+		_subscription?.Dispose();
 	}
 
 	/// <summary>
@@ -77,10 +75,24 @@ public partial class Counter: ComponentBase, IDisposable
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void TimerIntervalListener(object sender, ElapsedEventArgs e)
+	private void TimerIntervalListener()
 	{
 		IncrementCount();
 		// To make sure that the state is in sync on both client and server, add InvokeAsync(() => StateHasChanged()); to the timer interval callback
+		InvokeAsync(StateHasChanged);
+	}
+	
+	private void OnFinished()
+	{
+		ErrorStyle = "text-danger";
+		ErrorMessage = "Count Dracula has finished counting";
+		InvokeAsync(StateHasChanged);
+	}
+
+	private void OnError(string errorMessage)
+	{
+		ErrorStyle = "text-danger";
+		ErrorMessage = errorMessage;
 		InvokeAsync(StateHasChanged);
 	}
 }

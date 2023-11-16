@@ -2,45 +2,44 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HelmerDemo.BlazorServer.Shared.Tools.Attributes
+namespace HelmerDemo.BlazorServer.Shared.Tools.Attributes;
+
+/// <summary>
+/// Attribute for Security Headers
+/// </summary>
+public class SecurityHeadersAttribute : ActionFilterAttribute
 {
     /// <summary>
-    /// Attribute for Security Headers
+    /// Overrides the OnResultExecuting and adds the Security headers
     /// </summary>
-    public class SecurityHeadersAttribute : ActionFilterAttribute
+    /// <param name="context"></param>
+    public override void OnResultExecuting(ResultExecutingContext context)
     {
-        /// <summary>
-        /// Overrides the OnResultExecuting and adds the Security headers
-        /// </summary>
-        /// <param name="context"></param>
-        public override void OnResultExecuting(ResultExecutingContext context)
+        var result = context.Result;
+
+        if (result is ViewResult)
         {
-            var result = context.Result;
-
-            if (result is ViewResult)
-            {
-                AddHeaders(context, SecurityHeaderHelper.MvcSecurityHeaders(36000));
-            }
-
-            if (result is ActionResult)
-            {
-                AddHeaders(context, SecurityHeaderHelper.ApiSecurityHeaders(36000));
-            }
+            AddHeaders(context, SecurityHeaderHelper.MvcSecurityHeaders(36000));
         }
 
-        /// <summary>
-        /// This generic method adds the Security headers
-        /// </summary>
-        /// <param name="context">Th result context.</param>
-        /// <param name="headers">Dictionary List of the security headers</param>
-        private void AddHeaders(ResultExecutingContext context, Dictionary<string, string> headers)
+        if (result is ActionResult)
         {
-            foreach (var header in headers)
+            AddHeaders(context, SecurityHeaderHelper.ApiSecurityHeaders(36000));
+        }
+    }
+
+    /// <summary>
+    /// This generic method adds the Security headers
+    /// </summary>
+    /// <param name="context">Th result context.</param>
+    /// <param name="headers">Dictionary List of the security headers</param>
+    private void AddHeaders(ResultExecutingContext context, Dictionary<string, string> headers)
+    {
+        foreach (var header in headers)
+        {
+            if (!context.HttpContext.Response.Headers.ContainsKey(header.Key))
             {
-                if (!context.HttpContext.Response.Headers.ContainsKey(header.Key))
-                {
-                    context.HttpContext.Response.Headers.Add(header.Key, header.Value);
-                }
+                context.HttpContext.Response.Headers.Add(header.Key, header.Value);
             }
         }
     }

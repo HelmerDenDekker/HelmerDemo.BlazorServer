@@ -1,0 +1,23 @@
+﻿@page "/counterrx"
+
+@{
+	this.MaxValue = 20;
+}
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p>This demonstrates the use ReactiveX instead of events.</p>
+
+@if (CurrentCount >= MaxValue)
+{
+	<p role="status" class="@ErrorStyle">@ErrorMessage</p>
+}
+<p role="status" class="@ErrorStyle">Current count: @CurrentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<h2>Resources</h2>
+
+<a href="https://markheath.net/post/reactive-extensions-observables-versus" title="Reactive Extensions Observables Versus Regular .NET Events Part 1">Reactive Extensions Observables Versus Regular .NET Events Part 1</a>

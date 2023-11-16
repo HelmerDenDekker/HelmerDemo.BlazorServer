@@ -1,0 +1,16 @@
+﻿@page "/clockrxev"
+@using HelmerDemo.BlazorServer.Shared.Tools.Extensions
+
+<PageTitle>Clock Rx</PageTitle>
+
+<h1>Clock ReactiveX and observable</h1>
+
+<p>This demonstrates a simple clock based on ReactiveX with decoupled observable</p>
+
+@if (!ErrorMessage.IsNullOrWhiteSpace())
+{
+	<p role="status" class="text-danger">@ErrorMessage</p>
+}
+
+
+<div class="clock"><p> @CurrentTime.Hours.ToString("D2") : @CurrentTime.Minutes.ToString("D2") : @CurrentTime.Seconds.ToString("D2") </p></div>

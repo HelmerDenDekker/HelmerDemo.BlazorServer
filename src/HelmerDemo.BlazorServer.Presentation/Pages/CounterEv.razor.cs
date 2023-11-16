@@ -1,12 +1,12 @@
 ﻿using System.Timers;
+using HelmerDemo.BlazorServer.Application.Handlers;
 using Microsoft.AspNetCore.Components;
+using ErrorEventArgs = System.IO.ErrorEventArgs;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
-public partial class Counter: ComponentBase, IDisposable
+public partial class CounterEv : ComponentBase, IDisposable
 {
-	private System.Timers.Timer _timer;
-
 	/// <summary>
 	/// Buffer to keep track of count
 	/// </summary>
@@ -27,20 +27,19 @@ public partial class Counter: ComponentBase, IDisposable
 	/// </summary>
 	protected string ErrorMessage = "You hit the maximum value";
 
+	private CounterHandler _eventDemo;
+
 	/// <summary>
 	/// Add 1 to the count, until max value
 	/// </summary>
 	protected void IncrementCount()
 	{
-		if(CurrentCount < MaxValue)
+		if (CurrentCount < MaxValue)
 			CurrentCount++;
 		else
 		{
 			ErrorStyle = "text-danger";
-			//Stop timer and finish the events 
-			_timer.Enabled = false;
-			_timer.Elapsed -= TimerIntervalListener;
-			_timer.Dispose();
+			Dispose();
 		}
 	}
 
@@ -52,24 +51,24 @@ public partial class Counter: ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			_timer = new System.Timers.Timer();
-			_timer.Interval = 1000;
-			// Subscribe to the listener
-			_timer.Elapsed += TimerIntervalListener;
-			_timer.AutoReset = true;
-			// Start the timer
-			_timer.Enabled = true;
+			_eventDemo = new CounterHandler();
+			_eventDemo.Progress += TimerIntervalListener;
+			_eventDemo.Finished += OnFinished;
+			_eventDemo.Error += OnError;
+			_eventDemo.Start(MaxValue);
 		}
+
 		base.OnAfterRender(firstRender);
 	}
 
-		
 	/// <summary>
 	/// During prerender, this component is rendered without calling OnAfterRender and then immediately disposed this means timer will be null so we have to check for null or use the Null-conditional operator ? 
 	/// </summary>
 	public void Dispose()
 	{
-		_timer?.Dispose();
+		_eventDemo.Progress -= TimerIntervalListener;
+		_eventDemo.Finished -= OnFinished;
+		_eventDemo.Error -= OnError;
 	}
 
 	/// <summary>
@@ -77,10 +76,24 @@ public partial class Counter: ComponentBase, IDisposable
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void TimerIntervalListener(object sender, ElapsedEventArgs e)
+	private void TimerIntervalListener(object sender, ProgressEventArgs e)
 	{
 		IncrementCount();
 		// To make sure that the state is in sync on both client and server, add InvokeAsync(() => StateHasChanged()); to the timer interval callback
+		InvokeAsync(StateHasChanged);
+	}
+
+	private void OnFinished()
+	{
+		ErrorStyle = "text-danger";
+		ErrorMessage = "Count Dracula has finished counting";
+		InvokeAsync(StateHasChanged);
+	}
+
+	private void OnError(object? sender, Application.Handlers.ErrorEventArgs errorEventArgs)
+	{
+		ErrorStyle = "text-danger";
+		ErrorMessage = errorEventArgs.Exception.Message;
 		InvokeAsync(StateHasChanged);
 	}
 }
