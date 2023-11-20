@@ -1,0 +1,30 @@
+@page "/personpet"
+
+<PageTitle>Persons pet</PageTitle>
+
+<EditForm EditContext="@EditContext">
+<DataAnnotationsValidator />
+
+<div class="form-group">
+    <label for="name">Enter your Name: </label>
+    <InputText Id="name" Class="form-control" @bind-Value="@person.Name"></InputText>
+    <ValidationMessage For="@(() => person.Name)" />
+
+</div>
+<div class="form-group">
+    <label for="body">Select your pet: </label>
+    <InputSelect @bind-Value="@person.Pet">
+        <option value="Cat">Cat</option>
+        <option value="Dog">Dog</option>
+        <option value="Horse">Horse</option>
+        <option value="Lion">Lion</option>
+    </InputSelect>
+     <ValidationMessage For="@(() => person.Pet)" />
+</div>
+
+<p>
+    <button type="submit">Submit</button>
+</p>
+</EditForm>
+
+
