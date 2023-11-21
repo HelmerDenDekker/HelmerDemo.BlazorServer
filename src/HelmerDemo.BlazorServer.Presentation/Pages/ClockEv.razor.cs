@@ -11,7 +11,7 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages;
 public partial class ClockEv : ComponentBase, IDisposable
 {
 	[Inject]
-	private ITimeHandler _timeTimer { get; set; }
+	private IDigitalTimeHandler _timeTimer { get; set; }
 	
 	[Inject]
 	private IClockProvider _clockService { get; set; }
@@ -27,7 +27,7 @@ public partial class ClockEv : ComponentBase, IDisposable
 	/// <returns></returns>
 	protected override async Task OnInitializedAsync()
 	{
-		_timeTimer.OnTimeChanged += TimeListener;
+		_timeTimer.TimeUpdated += TimeListener;
 		var currentTime = await _clockService.StartClock();
 		this.CurrentTime = currentTime;
 	}
@@ -37,7 +37,7 @@ public partial class ClockEv : ComponentBase, IDisposable
 	/// </summary>
 	/// <param name="source"></param>
 	/// <param name="args"></param>
-	private void TimeListener(object source, TimeHandlerEventArgs args)
+	private void TimeListener(object source, DigitalTimeEventArgs args)
 	{
 		this.CurrentTime = args.CurrentTime;
 		InvokeAsync(StateHasChanged);
@@ -45,7 +45,7 @@ public partial class ClockEv : ComponentBase, IDisposable
 
 	public void Dispose()
 	{
-		_timeTimer.OnTimeChanged -= TimeListener;
+		_timeTimer.TimeUpdated -= TimeListener;
 		// TODO release managed resources here
 	}
 }

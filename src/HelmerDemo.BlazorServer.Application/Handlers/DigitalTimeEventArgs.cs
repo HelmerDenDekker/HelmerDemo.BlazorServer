@@ -3,9 +3,9 @@
 namespace HelmerDemo.BlazorServer.Application.Handlers;
 
 /// <summary>
-/// Use EventArgs to deliver the information <see cref="DigitalClock"/> to the event handler
+/// Event Argument class for <see cref="DigitalTime"/>; Use EventArgs to deliver the information  to the event handler
 /// </summary>
-public class TimeHandlerEventArgs : EventArgs
+public class DigitalTimeEventArgs : EventArgs
 {
 	/// <summary>
 	/// The time on the Digital Clock
@@ -13,10 +13,10 @@ public class TimeHandlerEventArgs : EventArgs
 	public DigitalTime CurrentTime { get; set; }
 
 	/// <summary>
-	/// The <see cref="TimeHandler"/>
+	/// The <see cref="DigitalTimeHandler"/>
 	/// </summary>
 	/// <param name="time"></param>
-	public TimeHandlerEventArgs(DigitalTime time)
+	public DigitalTimeEventArgs(DigitalTime time)
 	{
 		CurrentTime = time;
 	}

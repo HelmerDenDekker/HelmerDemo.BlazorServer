@@ -5,10 +5,10 @@ namespace HelmerDemo.BlazorServer.Application.Handlers;
 /// </summary>
 public class ErrorEventArgs : EventArgs
 {
-	public ErrorEventArgs(Exception exception = null)
+	public ErrorEventArgs(Exception exception)
 	{
-		Exception = exception;
+		Error = exception;
 	}
 
-	public Exception Exception { get; private set; }
+	public Exception Error { get; private set; }
 }

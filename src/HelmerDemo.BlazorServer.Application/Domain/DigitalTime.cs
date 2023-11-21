@@ -2,10 +2,19 @@
 
 public class DigitalTime
 {
+    /// <summary>
+    /// Gets the hours
+    /// </summary>
     public int Hours { get; private set; }
 
+    /// <summary>
+    /// Gets the minutes
+    /// </summary>
     public int Minutes { get; private set; }
 
+    /// <summary>
+    /// Gets the seconds
+    /// </summary>
     public int Seconds { get; private set; }
 
     /// <summary>
@@ -54,7 +63,7 @@ public class DigitalTime
     
     
     /// <summary>
-    /// Validates the input to hourss, minutes and second
+    /// Validates the input to hours, minutes and second
     /// </summary>
     /// <param name="hours"></param>
     /// <param name="minutes"></param>

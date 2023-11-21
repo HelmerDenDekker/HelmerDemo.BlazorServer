@@ -5,13 +5,13 @@ namespace HelmerDemo.BlazorServer.Application.Providers;
 
 public class ClockProvider : IClockProvider
 {
-	private readonly ITimeHandler _timeTimer;
+	private readonly IDigitalTimeHandler _timeTimer;
 
 	/// <summary>
 	/// Initializes a new <see cref="ClockProvider"/>
 	/// </summary>
 	/// <param name="timeTimer">The Timer event</param>
-	public ClockProvider(ITimeHandler timeTimer)
+	public ClockProvider(IDigitalTimeHandler timeTimer)
 	{
 		_timeTimer = timeTimer;
 	}
@@ -37,7 +37,7 @@ public class ClockProvider : IClockProvider
 		var updatedTime = time.AddSecond();
 		await second;
 		//raise the Timer event to let the UI know it is time to update (loose coupling)
-		_timeTimer.RaiseTimeUpdate(updatedTime);
+		_timeTimer.OnTimeUpdated(updatedTime);
 		await AddSecond(updatedTime);
 	}
 }

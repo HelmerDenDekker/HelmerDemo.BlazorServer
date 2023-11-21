@@ -4,9 +4,9 @@ public class CounterHandler
 {
 	private int _maxCount;
 	
-	public event EventHandler<ProgressEventArgs> Progress;
+	public event EventHandler<ProgressEventArgs> Progressing;
 	public event Action Finished = delegate { };
-	public event EventHandler<ErrorEventArgs> Error;
+	public event EventHandler<ErrorEventArgs> Errored;
 
 	/// <summary>
 	/// Helper to prevent race condition
@@ -14,7 +14,7 @@ public class CounterHandler
 	/// <param name="e"></param>
 	protected virtual void OnError(ErrorEventArgs e)
 	{
-		if (Error != null) Error(this, e);
+		if (Errored != null) Errored(this, e);
 	}
 
 	protected virtual void OnFinished()
@@ -28,7 +28,7 @@ public class CounterHandler
 	/// <param name="e"></param>
 	protected virtual void OnProgress(ProgressEventArgs e)
 	{
-		if (Progress != null) Progress(this, e);
+		if (Progressing != null) Progressing(this, e);
 	}
 
 	/// <summary>
