@@ -1,7 +1,7 @@
-using System.ComponentModel.DataAnnotations;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Serilog;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
@@ -9,7 +9,7 @@ public partial class PersonPetRx : ComponentBase
 {
 	protected EditContext _editContext;
 	
-	protected Person _person = new();
+	protected PersonPet.Person _person = new();
 
 
 	private InputTextArea _inputTextReference;
@@ -23,23 +23,18 @@ public partial class PersonPetRx : ComponentBase
 			x => _editContext.OnFieldChanged += x,
 			x => _editContext.OnFieldChanged -= x);
 		
-		obs.Do(p => LogEvents($"Changed from editform context {p.EventArgs.FieldIdentifier.FieldName}")).Subscribe();
+		obs.Do(p => Log.Logger.Information($"Changed from editform context {p.EventArgs.FieldIdentifier.FieldName}")).Subscribe();
 		obs.Where(e => e.EventArgs.FieldIdentifier.FieldName.Equals("Pet")).Subscribe(p => PersonGetsPetName());
 
 		var obstst = Observable.FromEventPattern<FieldChangedEventArgs>(_editContext, "OnFieldChanged");
 		obstst.Do(p => LogEvents($"Changed from edFrm evPattern context {p.EventArgs}")).Subscribe();
-		
 
 		base.OnInitialized();
 	}
-	
-	
 
-	private void LogTextEvents(ChangeEventArgs objEventArgs)
-	{
-		Console.WriteLine("Field changed: " + objEventArgs);
-	}
-
+	/// <summary>
+	/// Changes the name of the person to the name of the pet type
+	/// </summary>
 	private void PersonGetsPetName()
 	{
 		_person.Name = _person.Pet; 
@@ -49,14 +44,6 @@ public partial class PersonPetRx : ComponentBase
 	{
 		Console.WriteLine("Field changed: " + e);
 	}
-
-	public class Person
-	{
-		[StringLength(16, ErrorMessage = "Name too long (16 character limit).")]
-		public string Name { get; set; }
-		public string Pet { get; set; }
-	}
-
 	private void Submit(EditContext obj)
 	{
 		Console.WriteLine($"Form submitted: {_person.Name} has pet type {_person.Pet}" );
