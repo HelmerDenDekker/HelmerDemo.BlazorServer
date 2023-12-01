@@ -1,7 +1,10 @@
 using HelmerDemo.BlazorServer.Application.Handlers;
 using HelmerDemo.BlazorServer.Application.Providers;
+using HelmerDemo.BlazorServer.Shared.Tools.Middleware;
 using HelmerDemo.BlazorServer.Shared.Tools.Models;
 using Serilog;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +31,7 @@ static void ConfigureRequestPipeline(WebApplication app)
 {
 	//ToDo https://learn.microsoft.com/en-us/aspnet/core/blazor/security/content-security-policy?view=aspnetcore-7.0
 	#if !DEBUG
-	app.UseMiddleware<WebSecurityMiddleware>();
+	//app.UseMiddleware<WebSecurityMiddleware>();
 	#endif
 
 	// Configure the HTTP request pipeline.
@@ -50,3 +53,8 @@ static void ConfigureRequestPipeline(WebApplication app)
 
 	app.Run();
 }
+
+/// <summary>
+/// Added for WebApplicationFactory integration testing.
+/// </summary>
+public partial class Program { }
