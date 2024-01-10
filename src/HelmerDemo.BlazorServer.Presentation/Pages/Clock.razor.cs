@@ -1,6 +1,5 @@
 ﻿using HelmerDemo.BlazorServer.Application.Domain;
 using HelmerDemo.BlazorServer.Application.Events;
-using HelmerDemo.BlazorServer.Application.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages
@@ -8,9 +7,8 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages
 	public class ClockComponent : ComponentBase
 	{
 		[Inject]
-		private ITimeTimer _timeTimer { get; set; }
-		[Inject]
-		private IClockService _clockService { get; set; }
+		private IClockTimer _observableClock { get; set; }
+
 
 		/// <summary>
 		/// The digital time in the frontend
@@ -23,8 +21,8 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages
 		/// <returns></returns>
 		protected override async Task OnInitializedAsync()
 		{
-			_timeTimer.OnTimeChanged += TimeListener;
-			var currentTime = await _clockService.StartClock();
+			_observableClock.ClockTimeUpdated += OnTimeUpdated;
+			var currentTime = await _observableClock.Start();
 			this.CurrentTime = new DigitalClock(currentTime);
 		}
 
@@ -33,7 +31,7 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="args"></param>
-		private void TimeListener(object source, TimeTimerEventArgs args)
+		private void OnTimeUpdated(object source, ClockTimerEventArgs args)
 		{
 			this.CurrentTime = args.CurrentTime;
 			InvokeAsync(() => StateHasChanged());
