@@ -14,9 +14,8 @@ static void AddServices(WebApplicationBuilder builder)
 	var corsSettings = new CorsSettings();
 	builder.Configuration.GetSection("CorsSettings").Bind(corsSettings);
 
-	builder.Services.AddSingleton<ITimeTimer, TimeTimer>();
+	builder.Services.AddSingleton<IClockTimer, ClockTimerObservable>();
 	builder.Services.AddSingleton<WeatherForecastService>();
-	builder.Services.AddSingleton<IClockService, ClockService>();
 	// Add services to the container.
 	builder.Services.AddRazorPages();
 	builder.Services.AddServerSideBlazor();
