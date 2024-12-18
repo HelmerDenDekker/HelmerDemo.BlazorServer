@@ -1,5 +1,7 @@
 using HelmerDemo.BlazorServer.Application.Handlers;
+using HelmerDemo.BlazorServer.Application.Interfaces;
 using HelmerDemo.BlazorServer.Application.Providers;
+using HelmerDemo.BlazorServer.Application.Reactive;
 using HelmerDemo.BlazorServer.Shared.Tools.Models;
 using Serilog;
 
@@ -17,6 +19,7 @@ static void AddServices(WebApplicationBuilder builder)
 	builder.Services.AddSingleton<IDigitalTimeHandler, DigitalTimeHandler>();
 	builder.Services.AddSingleton<WeatherForecastService>();
 	builder.Services.AddSingleton<IClockProvider, ClockProvider>();
+	builder.Services.AddSingleton<IMessageBoxStream, MessageBoxStream>();
 	// Add services to the container.
 	builder.Services.AddRazorPages();
 	builder.Services.AddServerSideBlazor();

@@ -1,0 +1,17 @@
+@page "/messagebox"
+
+<PageTitle>Persons pet</PageTitle>
+
+<EditForm EditContext="@_editContext" OnValidSubmit="Submit">
+<DataAnnotationsValidator />
+
+<div class="form-group">
+    <label for="name">Enter your Message: </label>
+    <InputTextArea @oninput="@(ui => { MessageInput.Content = (string)ui.Value ?? string.Empty; MessageTextInputEventHandler(ui); })" @onkeyup="MessageTextKeyUpEventHandler" @ref="_inputTextReference"  Id="name" Class="form-control" @bind-Value="MessageInput.Content"> </InputTextArea>
+    <ValidationMessage For="@(() => MessageInput.Content)" />
+</div>
+
+<p>
+    <button type="submit">Submit</button>
+</p>
+</EditForm>

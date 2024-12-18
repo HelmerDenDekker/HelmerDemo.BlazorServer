@@ -1,5 +1,5 @@
 ﻿using HelmerDemo.BlazorServer.Application.Domain;
-using HelmerDemo.BlazorServer.Application.Handlers;
+using HelmerDemo.BlazorServer.Application.Reactive;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
@@ -12,50 +12,32 @@ public partial class ClockRxEv : ComponentBase, IDisposable
 	/// <summary>
 	/// The digital time in the frontend
 	/// </summary>
-	protected DigitalTime CurrentTime = new(DateTime.Now);
+	protected DigitalTime CurrentTime = new DigitalTime(DateTime.Now);
 	
-	/// <summary>
-	/// Error message to inform the user
-	/// </summary>
-	protected string ErrorMessage = "";
 
-
-	private IDisposable _subscription;
-	private ClockSubject _subject;
+	private IDisposable? _subscription;
+	private DigitalTimeStream _subject = new();
 
 	/// <summary>
 	/// Overrides the OnInitialized to subscribe the listener
 	/// </summary>
 	/// <returns></returns>
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		CurrentTime = new DigitalTime(DateTime.Now);
-
-		// Source
-		_subject = new ClockSubject();
-		var timer = _subject.Start();
 		// Subscribe
-		_subscription = timer.Subscribe(
-			tick => TimeObserver(tick), e=> OnError(e.Message));
-		
-		this.CurrentTime = new(DateTime.Now);
+		_subscription = _subject.WhenDigitalTimeChanged.Subscribe(
+			time =>
+			{
+				this.CurrentTime = time;
+				InvokeAsync(StateHasChanged);
+			}, e=> OnError(e.Message));
 	}
 
 	/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
 	void IDisposable.Dispose()
 	{
-		_subject?.Stop();
+		_subject?.Dispose();
 		_subscription?.Dispose();
-	}
-	
-	/// <summary>
-	/// Observer
-	/// </summary>
-	/// <param name="time"></param>
-	private void TimeObserver(DigitalTime time) 
-	{
-		this.CurrentTime = time;
-		InvokeAsync(StateHasChanged);
 	}
 	
 	private void OnError(string errorMessage)
@@ -63,4 +45,6 @@ public partial class ClockRxEv : ComponentBase, IDisposable
 		ErrorMessage = errorMessage;
 		InvokeAsync(StateHasChanged);
 	}
+
+	public string ErrorMessage { get; set; } = string.Empty;
 }

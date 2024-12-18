@@ -16,7 +16,7 @@ public partial class PersonPetRx : ComponentBase
 	
 	protected override void OnInitialized()
 	{
-		// I think it is better to ref and listen fromm there (OnAfterRender)
+		// I think it is better to ref and listen from there (OnAfterRender)
 		_editContext = new EditContext(_person);
 		// Note: The OnFieldChanged event is raised for each field in the model
 		var obs = Observable.FromEventPattern<EventHandler<FieldChangedEventArgs>, FieldChangedEventArgs>(

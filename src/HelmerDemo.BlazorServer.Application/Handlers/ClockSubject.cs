@@ -5,7 +5,7 @@ namespace HelmerDemo.BlazorServer.Application.Handlers;
 
 public class ClockSubject
 {
-	private bool _stopTheClock = false;
+	private bool _stopTheClock;
 	
 	public IObservable<DigitalTime> Start()
 	{

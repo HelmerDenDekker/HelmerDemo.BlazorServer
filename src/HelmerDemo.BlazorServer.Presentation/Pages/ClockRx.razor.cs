@@ -6,17 +6,18 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
 public partial class ClockRx : ComponentBase, IDisposable
 {
+	private IDisposable? _subscription;
 
 	/// <summary>
-	/// The digital time in the frontend
+	///     The digital time in the frontend
 	/// </summary>
 	protected DigitalTime CurrentTime = new(DateTime.Now);
 
 	/// <summary>
-	/// Overrides the OnInitialized to subscribe the listener
+	///     Overrides the OnInitialized to subscribe the listener
 	/// </summary>
 	/// <returns></returns>
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		CurrentTime = new DigitalTime(DateTime.Now);
 
@@ -25,24 +26,16 @@ public partial class ClockRx : ComponentBase, IDisposable
 			dueTime: TimeSpan.Zero,
 			period: TimeSpan.FromSeconds(1));
 		// Subscribe
-		ticks.Subscribe(
-			tick => TimeListener());
-			
-
-		this.CurrentTime = new(DateTime.Now);
+		_subscription = ticks.Subscribe(_ =>
+			{
+				CurrentTime = CurrentTime.AddSecond();
+				InvokeAsync(StateHasChanged);
+			}
+		);
 	}
 
 	public void Dispose()
 	{
-		//ToDo Dispose
-	}
-
-	/// <summary>
-	/// The event listener, listening to an external event
-	/// </summary>
-	private void TimeListener()
-	{
-		this.CurrentTime = CurrentTime.AddSecond();
-		InvokeAsync(StateHasChanged);
+		_subscription?.Dispose();
 	}
 }
