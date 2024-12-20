@@ -1,0 +1,20 @@
+@using HelmerDemo.BlazorServer.Presentation.ViewModel
+
+@switch (UserSessionContent.State)
+{
+    case UserSessionState.Loading:
+        <LoadingBar LoadingMessage="@UserSessionContent.SystemMessage"/>
+        break;
+    case UserSessionState.Error:
+        <ErrorBar ErrorMessage="@UserSessionContent.SystemMessage"/>
+        break;
+    case UserSessionState.Active:
+        <CascadingValue Value="this">
+            @Content
+        </CascadingValue>
+        break;
+    default:
+        <LoadingBar LoadingMessage="@UserSessionContent.SystemMessage"/>
+        break;
+}
+

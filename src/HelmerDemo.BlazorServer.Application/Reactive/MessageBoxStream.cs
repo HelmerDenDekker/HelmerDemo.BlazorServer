@@ -12,7 +12,7 @@ public class MessageBoxStream : IMessageBoxStream, IDisposable
 	/// <summary>
 	///  The BehaviorSubject begins by emitting the item most recently emitted: https://reactivex.io/documentation/subject.html
 	/// </summary>
-	private readonly BehaviorSubject<Message> _messageChangedSubject = new(Message.Create("Loading..."));
+	private readonly BehaviorSubject<Message> _messageChangedSubject = new(Message.Empty);
 
 	// TODO: MessageUserBox, later
 	public IObservable<Message> WhenMessageChanged => _messageChangedSubject;

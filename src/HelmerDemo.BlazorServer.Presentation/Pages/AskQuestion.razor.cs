@@ -13,7 +13,7 @@ using Serilog;
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
 // Showing the n:1 solution for simple messages
-public partial class MessageBox : ComponentBase, IDisposable
+public partial class AskQuestion : ComponentBase, IDisposable
 {
 	[Inject]
 	private IMessageBoxStream MessageBoxStream { get; set; } = default!;

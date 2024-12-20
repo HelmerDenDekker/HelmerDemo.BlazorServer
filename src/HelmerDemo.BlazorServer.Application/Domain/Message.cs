@@ -7,6 +7,12 @@ public class Message
 		Content = content;
 		CreatedAt = DateTime.UtcNow;
 	}
+
+	public Message()
+	{
+		Content = "";
+		CreatedAt = DateTime.UtcNow;
+	}
 	
 	public string Content { get; private set; }
 	
@@ -19,6 +25,8 @@ public class Message
 	{
 		return new Message(content);
 	}
+	
+	public static Message Empty => new Message();
 	
 	public void ChangeContent(string newContent)
 	{

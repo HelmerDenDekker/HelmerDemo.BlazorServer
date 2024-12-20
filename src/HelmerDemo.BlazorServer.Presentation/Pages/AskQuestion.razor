@@ -1,12 +1,12 @@
-@page "/messagebox"
+@page "/question"
 
-<PageTitle>Message Box</PageTitle>
+<PageTitle>Ask a Question</PageTitle>
 
 <EditForm EditContext="@_editContext" OnValidSubmit="Submit">
 <DataAnnotationsValidator />
 
 <div class="form-group">
-    <label for="name">Enter your Message: </label>
+    <label for="name">Enter your Question: </label>
     <InputTextArea @oninput="@(ui => { MessageInput.Content = (string)ui.Value ?? string.Empty; MessageTextInputEventHandler(ui); })" @onkeyup="MessageTextKeyUpEventHandler" @ref="_inputTextReference"  Id="name" Class="form-control" @bind-Value="MessageInput.Content"> </InputTextArea>
     <ValidationMessage For="@(() => MessageInput.Content)" />
 </div>
