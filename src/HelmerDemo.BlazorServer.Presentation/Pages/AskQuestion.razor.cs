@@ -15,8 +15,8 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages;
 // Showing the n:1 solution for simple messages
 public partial class AskQuestion : ComponentBase, IDisposable
 {
-	[Inject]
-	private IMessageBoxStream MessageBoxStream { get; set; } = default!;
+	[CascadingParameter]
+	public UserSessionProvider SessionContainer { get; set; }
 	
 	protected EditContext _editContext;
 	
@@ -29,24 +29,30 @@ public partial class AskQuestion : ComponentBase, IDisposable
 	private readonly Subject<string> _keyUpStream = new();
 	private IDisposable? _subscription;
 	private IDisposable? _enterSubscription;
+	
+	private string CookieKey => $"askquestion-with-campaignid";
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		_editContext = new EditContext(MessageInput);
 		
 		// Subscribe to the MessageBoxStream and load the latest message
-		_subscription = MessageBoxStream.WhenMessageChanged.Where(m=>!m.Content.IsNullOrWhiteSpace() && !m.Equals(MessageInput.Content)).Subscribe(message =>
-		{
-			MessageInput.Content = message.Content;
-			StateHasChanged();
-		});
+		await SetFromStorageAsync();
 		
 		_enterSubscription = _keyUpStream.Where(key => key == "Enter" || key == "NumpadEnter").Subscribe(_ => Submit(_editContext));
-
-		// TODO: This is very very chatty, consider throttling (or debouncing?) the stream. also, it should update the Message content, not creating a new
-		_inputStream.Where(m=>!m.IsNullOrWhiteSpace()).Subscribe(_ => MessageBoxStream.OnMessageChanged(Message.Create(MessageInput.Content)));
 		
-		base.OnInitialized();
+		// TODO: Extra (bonus) Keep this in sync with other AskQuestion tabs.
+		_inputStream.Where(m => !m.IsNullOrWhiteSpace()).Throttle(TimeSpan.FromMilliseconds(100)).Subscribe(_ => InvokeAsync(()=>StoreMessageAsync()) );
+	}
+
+	private async Task SetFromStorageAsync()
+	{
+		var result = await SessionContainer.LocalStorageProvider.GetAsync<string>(CookieKey);
+		if (result.IsSuccess)
+		{
+			MessageInput.Content = result.Value;
+			StateHasChanged();
+		}
 	}
 
 	private void LogEvents(string e)
@@ -57,7 +63,7 @@ public partial class AskQuestion : ComponentBase, IDisposable
 	{
 		Console.WriteLine($"Form submitted: {MessageInput.Content}" );
 		MessageInput.Content = string.Empty;
-		MessageBoxStream.OnMessageChanged(Message.Create(""));
+		// TODO: Send the message to the server and Delete the cookiekey entry from LocalStorage
 		StateHasChanged();
 	}
 	
@@ -73,8 +79,14 @@ public partial class AskQuestion : ComponentBase, IDisposable
 
 	public void Dispose()
 	{
+		_inputStream.Where(m => !m.IsNullOrWhiteSpace()).Subscribe(_ => InvokeAsync(()=> StoreMessageAsync()));
 		((IDisposable)_inputTextReference).Dispose();
 		_subscription?.Dispose();
 		_enterSubscription?.Dispose();
+	}
+
+	public async Task StoreMessageAsync()
+	{
+		await SessionContainer.LocalStorageProvider.SetAsync<string>(CookieKey, MessageInput.Content);
 	}
 }
