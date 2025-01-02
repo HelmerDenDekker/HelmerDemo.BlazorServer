@@ -30,7 +30,7 @@ public partial class AskQuestion : ComponentBase, IDisposable
 	private IDisposable? _subscription;
 	private IDisposable? _enterSubscription;
 	
-	private string CookieKey => $"askquestion-with-campaignid";
+	private string CookieKey => $"askquestion-with-someid";
 
 	protected override async Task OnInitializedAsync()
 	{
