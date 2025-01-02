@@ -1,5 +1,5 @@
 using System.Timers;
-using HelmerDemo.BlazorServer.Application.Domain;
+using HelmerDemo.BlazorServer.Application.Domain.Clock;
 using Microsoft.AspNetCore.Components;
 using Timer = System.Timers.Timer;
 
@@ -28,7 +28,7 @@ public partial class Clock : ComponentBase, IDisposable
 			_timer = new System.Timers.Timer();
 			_timer.Interval = 1000;
 			// Subscribe to the listener
-			_timer.Elapsed += TimeListener;
+			_timer.Elapsed += OnTimeUpdated;
 			_timer.AutoReset = true;
 			// Start the timer
 			_timer.Enabled = true;
@@ -43,7 +43,7 @@ public partial class Clock : ComponentBase, IDisposable
 	{
 		if (_timer != null)
 		{
-			_timer.Elapsed -= TimeListener;
+			_timer.Elapsed -= OnTimeUpdated;
 		}
 		_timer?.Dispose();
 	}
@@ -53,7 +53,7 @@ public partial class Clock : ComponentBase, IDisposable
 	/// </summary>
 	/// <param name="source"></param>
 	/// <param name="args"></param>
-	private void TimeListener(object source, ElapsedEventArgs e)
+	private void OnTimeUpdated(object source, ElapsedEventArgs e)
 	{
 		this.CurrentTime = CurrentTime.AddSecond();
 		InvokeAsync(StateHasChanged);

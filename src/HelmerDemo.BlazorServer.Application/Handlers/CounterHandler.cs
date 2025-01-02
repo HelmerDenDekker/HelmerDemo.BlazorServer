@@ -3,36 +3,36 @@ namespace HelmerDemo.BlazorServer.Application.Handlers;
 public class CounterHandler
 {
 	private int _maxCount;
-	
+
 	public event EventHandler<ProgressEventArgs> Progressing;
 	public event Action Finished = delegate { };
 	public event EventHandler<ErrorEventArgs> Errored;
 
 	/// <summary>
-	/// Helper to prevent race condition
+	///     Helper to prevent race condition
 	/// </summary>
 	/// <param name="e"></param>
 	protected virtual void OnError(ErrorEventArgs e)
 	{
-		if (Errored != null) Errored(this, e);
+		Errored(this, e);
 	}
 
 	protected virtual void OnFinished()
 	{
-		if(Finished!=null) Finished();
+		Finished();
 	}
 
 	/// <summary>
-	/// Helper to prevent race condition
+	///     Helper to prevent race condition
 	/// </summary>
 	/// <param name="e"></param>
 	protected virtual void OnProgress(ProgressEventArgs e)
 	{
-		if (Progressing != null) Progressing(this, e);
+		Progressing(this, e);
 	}
 
 	/// <summary>
-	/// Starts the action
+	///     Starts the action
 	/// </summary>
 	/// <param name="max">The maximum count</param>
 	public void Start(int max)
@@ -51,6 +51,7 @@ public class CounterHandler
 				//Raise event
 				OnProgress(new ProgressEventArgs(n));
 			}
+
 			//Raise finished
 			OnFinished();
 		}

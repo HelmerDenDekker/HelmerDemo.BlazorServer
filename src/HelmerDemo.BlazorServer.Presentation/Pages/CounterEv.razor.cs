@@ -1,8 +1,6 @@
 ﻿using System.Reactive.Linq;
-using System.Timers;
 using HelmerDemo.BlazorServer.Application.Handlers;
 using Microsoft.AspNetCore.Components;
-using ErrorEventArgs = System.IO.ErrorEventArgs;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
@@ -53,7 +51,7 @@ public partial class CounterEv : ComponentBase, IDisposable
 		if (firstRender)
 		{
 			_eventDemo = new CounterHandler();
-			_eventDemo.Progressing += TimerIntervalListener;
+			_eventDemo.Progressing += OnTimeUpdated;
 			_eventDemo.Finished += OnFinished;
 			_eventDemo.Errored += OnError;
 			_eventDemo.Start(MaxValue);
@@ -64,7 +62,7 @@ public partial class CounterEv : ComponentBase, IDisposable
 		base.OnAfterRender(firstRender);
 	}
 
-	private void LogEvents(ProgressEventArgs objEventArgs)
+	private static void LogEvents(ProgressEventArgs objEventArgs)
 	{
 		Console.WriteLine("Progressing: " + objEventArgs.Progress.ToString());
 	}
@@ -74,7 +72,7 @@ public partial class CounterEv : ComponentBase, IDisposable
 	/// </summary>
 	public void Dispose()
 	{
-		_eventDemo.Progressing -= TimerIntervalListener;
+		_eventDemo.Progressing -= OnTimeUpdated;
 		_eventDemo.Finished -= OnFinished;
 		_eventDemo.Errored -= OnError;
 	}
@@ -84,7 +82,7 @@ public partial class CounterEv : ComponentBase, IDisposable
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void TimerIntervalListener(object sender, ProgressEventArgs e)
+	private void OnTimeUpdated(object? sender, ProgressEventArgs e)
 	{
 		IncrementCount();
 		// To make sure that the state is in sync on both client and server, add InvokeAsync(() => StateHasChanged()); to the timer interval callback

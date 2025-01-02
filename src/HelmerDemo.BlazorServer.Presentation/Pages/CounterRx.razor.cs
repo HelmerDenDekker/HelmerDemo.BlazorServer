@@ -1,5 +1,4 @@
-﻿using System.Timers;
-using HelmerDemo.BlazorServer.Application.Handlers;
+﻿using HelmerDemo.BlazorServer.Application.Handlers;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
@@ -26,7 +25,7 @@ public partial class CounterRx: ComponentBase, IDisposable
 	/// </summary>
 	protected string ErrorMessage = "You hit the maximum value";
 
-	private IDisposable _subscription;
+	private IDisposable? _subscription;
 
 	/// <summary>
 	/// Add 1 to the count, until max value
@@ -54,7 +53,7 @@ public partial class CounterRx: ComponentBase, IDisposable
 			var eventDemo = new CounterSubject();
 			var observable = eventDemo.Start(MaxValue);
 			_subscription = observable.Subscribe(
-				p => TimerIntervalListener(),
+				p => OnTimeUpdated(),
 				e => OnError(e.Message),
 				() => OnFinished());
 		}
@@ -75,7 +74,7 @@ public partial class CounterRx: ComponentBase, IDisposable
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void TimerIntervalListener()
+	private void OnTimeUpdated()
 	{
 		IncrementCount();
 		// To make sure that the state is in sync on both client and server, add InvokeAsync(() => StateHasChanged()); to the timer interval callback

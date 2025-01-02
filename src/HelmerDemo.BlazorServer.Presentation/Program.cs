@@ -1,5 +1,5 @@
-using HelmerDemo.BlazorServer.Application.Handlers;
 using HelmerDemo.BlazorServer.Application.Interfaces;
+using HelmerDemo.BlazorServer.Application.Observables;
 using HelmerDemo.BlazorServer.Application.Providers;
 using HelmerDemo.BlazorServer.Application.Reactive;
 using HelmerDemo.BlazorServer.Presentation.JsInterop;
@@ -19,10 +19,9 @@ static void AddServices(WebApplicationBuilder builder)
 	builder.Configuration.GetSection("CorsSettings").Bind(corsSettings);
 
 	builder.Services.AddSingleton<IDigitalTimeObservable, DigitalTimeObservable>();
+	builder.Services.AddSingleton<IDigitalTimeStream, DigitalTimeStream>();
 	builder.Services.AddDataProtection();
-	builder.Services.AddSingleton<IDigitalTimeHandler, DigitalTimeHandler>();
 	builder.Services.AddSingleton<WeatherForecastService>();
-	builder.Services.AddSingleton<IClockProvider, ClockProvider>();
 	builder.Services.AddSingleton<IMessageBoxStream, MessageBoxStream>();
 	builder.Services.AddScoped<ILocalStorageProvider, LocalStorageProvider>();
 	// Add services to the container.

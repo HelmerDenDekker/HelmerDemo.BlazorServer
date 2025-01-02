@@ -59,8 +59,29 @@ public class DigitalTime
 
         Hours = hours; Minutes = minutes; Seconds = seconds;
     }
-
     
+    public DigitalTime AddSecond()
+    {
+        Seconds++;
+        if (Seconds == 60)
+        {
+            Seconds = 0;
+            Minutes++;
+        }
+
+        if (Minutes == 60)
+        {
+            Minutes = 0;
+            Hours++;
+        }
+
+        if (Hours == 24)
+        {
+            Hours = 0;
+        }
+        
+        return this;
+    }
     
     /// <summary>
     /// Validates the input to hours, minutes and second
@@ -71,7 +92,7 @@ public class DigitalTime
     /// <exception cref="ArgumentException"></exception>
     private static void Validate(int hours, int minutes, int seconds)
     {
-        //Validation
+        //Validation TODO: Use the validation pattern IsValid
         if (hours >= 24)
         {
             throw new ArgumentException("Invalid time");

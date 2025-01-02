@@ -1,4 +1,4 @@
-using HelmerDemo.BlazorServer.Application.Domain;
+using HelmerDemo.BlazorServer.Application.Domain.Weather;
 
 namespace HelmerDemo.BlazorServer.Application.Providers;
 

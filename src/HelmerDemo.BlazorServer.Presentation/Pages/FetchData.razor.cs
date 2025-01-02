@@ -1,5 +1,4 @@
-using HelmerDemo.BlazorServer.Application.Domain;
-using HelmerDemo.BlazorServer.Application.Domain.WeatherForecast;
+﻿using HelmerDemo.BlazorServer.Application.Domain.Weather;
 using HelmerDemo.BlazorServer.Application.Services;
 using Microsoft.AspNetCore.Components;
 

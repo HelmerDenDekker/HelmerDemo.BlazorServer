@@ -1,6 +1,4 @@
-﻿using System.Reactive.Subjects;
-using HelmerDemo.BlazorServer.Application.Domain;
-using HelmerDemo.BlazorServer.Application.Interfaces;
+﻿using HelmerDemo.BlazorServer.Application.Interfaces;
 
 namespace HelmerDemo.BlazorServer.Application.Reactive;
 

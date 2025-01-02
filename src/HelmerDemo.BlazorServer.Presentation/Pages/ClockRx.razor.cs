@@ -1,5 +1,5 @@
 ﻿using System.Reactive.Linq;
-using HelmerDemo.BlazorServer.Application.Domain;
+using HelmerDemo.BlazorServer.Application.Domain.Clock;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
@@ -11,7 +11,7 @@ public partial class ClockRx : ComponentBase, IDisposable
 	/// <summary>
 	///     The digital time in the frontend
 	/// </summary>
-	protected DigitalTime CurrentTime = new(DateTime.Now);
+	protected DigitalTime _currentTime = new(DateTime.Now);
 
 	/// <summary>
 	///     Overrides the OnInitialized to subscribe the listener
@@ -19,7 +19,7 @@ public partial class ClockRx : ComponentBase, IDisposable
 	/// <returns></returns>
 	protected override void OnInitialized()
 	{
-		CurrentTime = new DigitalTime(DateTime.Now);
+		_currentTime = new DigitalTime(DateTime.Now);
 
 		// Source
 		IObservable<long> ticks = Observable.Timer(
@@ -28,7 +28,7 @@ public partial class ClockRx : ComponentBase, IDisposable
 		// Subscribe
 		_subscription = ticks.Subscribe(_ =>
 			{
-				CurrentTime = CurrentTime.AddSecond();
+				_currentTime = _currentTime.AddSecond();
 				InvokeAsync(StateHasChanged);
 			}
 		);

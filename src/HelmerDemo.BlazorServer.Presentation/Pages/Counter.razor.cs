@@ -39,7 +39,7 @@ public partial class Counter: ComponentBase, IDisposable
 			ErrorStyle = "text-danger";
 			//Stop timer and finish the events 
 			_timer.Enabled = false;
-			_timer.Elapsed -= TimerIntervalListener;
+			_timer.Elapsed -= OnTimeUpdated;
 			_timer.Dispose();
 		}
 	}
@@ -55,7 +55,7 @@ public partial class Counter: ComponentBase, IDisposable
 			_timer = new System.Timers.Timer();
 			_timer.Interval = 1000;
 			// Subscribe to the listener
-			_timer.Elapsed += TimerIntervalListener;
+			_timer.Elapsed += OnTimeUpdated;
 			_timer.AutoReset = true;
 			// Start the timer
 			_timer.Enabled = true;
@@ -69,7 +69,11 @@ public partial class Counter: ComponentBase, IDisposable
 	/// </summary>
 	public void Dispose()
 	{
-		_timer?.Dispose();
+		if (_timer != null)
+		{
+			_timer.Elapsed -= OnTimeUpdated;
+		}
+		_timer.Dispose();
 	}
 
 	/// <summary>
@@ -77,7 +81,7 @@ public partial class Counter: ComponentBase, IDisposable
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void TimerIntervalListener(object sender, ElapsedEventArgs e)
+	private void OnTimeUpdated(object? sender, ElapsedEventArgs e)
 	{
 		IncrementCount();
 		// To make sure that the state is in sync on both client and server, add InvokeAsync(() => StateHasChanged()); to the timer interval callback

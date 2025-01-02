@@ -1,11 +1,15 @@
 ﻿using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using HelmerDemo.BlazorServer.Application.Domain;
+using HelmerDemo.BlazorServer.Application.Domain.Clock;
 
 namespace HelmerDemo.BlazorServer.Application.Reactive;
 
-public class DigitalTimeStream : IDisposable
+public class DigitalTimeStream : IDigitalTimeStream
 {
+	private readonly Subject<DigitalTime> _digitalTimeSubject = new();
+	private readonly IDisposable _subscription;
+	private DigitalTime _currentTime = new(DateTime.Now);
+	
 	public DigitalTimeStream()
 	{
 		// Source
@@ -21,11 +25,7 @@ public class DigitalTimeStream : IDisposable
 		);
 	}
 	
-	private readonly Subject<DigitalTime> _digitalTimeSubject = new();
-	private readonly IDisposable _subscription;
 	public IObservable<DigitalTime> WhenDigitalTimeChanged => _digitalTimeSubject;
-
-	private DigitalTime _currentTime = new(DateTime.Now);
 	
 	public void Dispose()
 	{
