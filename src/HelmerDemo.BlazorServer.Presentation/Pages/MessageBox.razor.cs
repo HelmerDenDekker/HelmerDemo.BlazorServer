@@ -38,7 +38,7 @@ public partial class MessageBox : ComponentBase, IDisposable
 		_subscription = MessageBoxStream.WhenMessageChanged.Where(m=>!m.Content.IsNullOrWhiteSpace() && !m.Equals(MessageInput.Content)).Subscribe(message =>
 		{
 			MessageInput.Content = message.Content;
-			StateHasChanged();
+			InvokeAsync(StateHasChanged);
 		});
 		
 		_enterSubscription = _keyUpStream.Where(key => key == "Enter" || key == "NumpadEnter").Subscribe(_ => Submit(_editContext));

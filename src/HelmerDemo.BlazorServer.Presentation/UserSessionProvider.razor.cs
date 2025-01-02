@@ -9,7 +9,7 @@ using Serilog;
 
 namespace HelmerDemo.BlazorServer.Presentation;
 
-// Showing the n:1 solution for simple messages
+// A user session provider for shared variables between pages, and between page navigations.
 public partial class UserSessionProvider : ComponentBase, IDisposable
 {
 	[Parameter]
@@ -73,7 +73,7 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 
 			deleteLocalStore.Subscribe(
 				_ => UpdateState(UserSessionState.Active),
-				onError: ex => Log.Error(ex, "Error deleting the local storage"),
+				onError: exc => Log.Error(exc, "Error deleting the local storage"),
 				() => Log.Information("Delete Completed"));
 			return;
 		}
