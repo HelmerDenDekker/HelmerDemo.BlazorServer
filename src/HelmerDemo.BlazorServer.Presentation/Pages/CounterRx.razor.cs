@@ -1,5 +1,4 @@
-﻿using System.Timers;
-using HelmerDemo.BlazorServer.Application.Handlers;
+﻿using HelmerDemo.BlazorServer.Application.Handlers;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;

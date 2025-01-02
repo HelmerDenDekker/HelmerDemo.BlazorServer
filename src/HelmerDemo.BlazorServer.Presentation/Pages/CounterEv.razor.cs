@@ -1,8 +1,6 @@
 ﻿using System.Reactive.Linq;
-using System.Timers;
 using HelmerDemo.BlazorServer.Application.Handlers;
 using Microsoft.AspNetCore.Components;
-using ErrorEventArgs = System.IO.ErrorEventArgs;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 

@@ -1,6 +1,5 @@
 using HelmerDemo.BlazorServer.Application.Handlers;
 using HelmerDemo.BlazorServer.Application.Providers;
-using HelmerDemo.BlazorServer.Shared.Tools.Middleware;
 using HelmerDemo.BlazorServer.Shared.Tools.Models;
 using Serilog;
 
