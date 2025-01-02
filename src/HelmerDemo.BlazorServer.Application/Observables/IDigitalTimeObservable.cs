@@ -1,13 +1,13 @@
-﻿using HelmerDemo.BlazorServer.Application.Domain;
+﻿using HelmerDemo.BlazorServer.Application.Domain.Clock;
 
-namespace HelmerDemo.BlazorServer.Application.Events;
+namespace HelmerDemo.BlazorServer.Application.Observables;
 
-public interface IClockTimer
+public interface IDigitalTimeObservable
 {
     /// <summary>
     /// Declare the event using <see cref="EventHandler"/>
     /// </summary>
-    public event EventHandler<ClockTimerEventArgs> ClockTimeUpdated;
+    public event EventHandler<DigitalTimeEventArgs> DigitalTimeUpdated;
 	
 	/// <summary>
 	/// Start the clock with the current Time.

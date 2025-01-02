@@ -1,4 +1,5 @@
 using HelmerDemo.BlazorServer.Application.Domain;
+using HelmerDemo.BlazorServer.Application.Domain.WeatherForecast;
 
 namespace HelmerDemo.BlazorServer.Application.Services
 {

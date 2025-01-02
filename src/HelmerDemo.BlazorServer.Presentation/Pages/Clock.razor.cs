@@ -1,5 +1,6 @@
 ﻿using HelmerDemo.BlazorServer.Application.Domain;
-using HelmerDemo.BlazorServer.Application.Events;
+using HelmerDemo.BlazorServer.Application.Domain.Clock;
+using HelmerDemo.BlazorServer.Application.Observables;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages
@@ -7,13 +8,13 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages
 	public class ClockComponent : ComponentBase
 	{
 		[Inject]
-		private IClockTimer _observableClock { get; set; }
+		private IDigitalTimeObservable _observableClock { get; set; }
 
 
 		/// <summary>
 		/// The digital time in the frontend
 		/// </summary>
-		protected DigitalClock CurrentTime = new DigitalClock(new DigitalTime(0,0,0));
+		protected DigitalTime CurrentTime = new DigitalTime(0,0,0);
 
 		/// <summary>
 		/// Overrides the OnInitialized to subscribe the listener
@@ -21,9 +22,9 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages
 		/// <returns></returns>
 		protected override async Task OnInitializedAsync()
 		{
-			_observableClock.ClockTimeUpdated += OnTimeUpdated;
+			_observableClock.DigitalTimeUpdated += OnTimeUpdated;
 			var currentTime = await _observableClock.Start();
-			this.CurrentTime = new DigitalClock(currentTime);
+			CurrentTime = currentTime;
 		}
 
 		/// <summary>
@@ -31,9 +32,9 @@ namespace HelmerDemo.BlazorServer.Presentation.Pages
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="args"></param>
-		private void OnTimeUpdated(object source, ClockTimerEventArgs args)
+		private void OnTimeUpdated(object source, DigitalTimeEventArgs args)
 		{
-			this.CurrentTime = args.CurrentTime;
+			CurrentTime = args.CurrentTime;
 			InvokeAsync(() => StateHasChanged());
 		}
 	}
