@@ -1,4 +1,4 @@
-﻿namespace HelmerDemo.BlazorServer.Application.Domain;
+namespace HelmerDemo.BlazorServer.Application.Domain.Clock;
 
 public class DigitalTime
 {

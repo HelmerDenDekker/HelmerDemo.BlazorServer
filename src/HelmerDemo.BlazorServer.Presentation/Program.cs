@@ -18,6 +18,7 @@ static void AddServices(WebApplicationBuilder builder)
 	var corsSettings = new CorsSettings();
 	builder.Configuration.GetSection("CorsSettings").Bind(corsSettings);
 
+	builder.Services.AddSingleton<IDigitalTimeObservable, DigitalTimeObservable>();
 	builder.Services.AddDataProtection();
 	builder.Services.AddSingleton<IDigitalTimeHandler, DigitalTimeHandler>();
 	builder.Services.AddSingleton<WeatherForecastService>();

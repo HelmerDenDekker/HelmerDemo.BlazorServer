@@ -1,4 +1,4 @@
-﻿using System.Timers;
+using System.Timers;
 using HelmerDemo.BlazorServer.Application.Domain;
 using Microsoft.AspNetCore.Components;
 using Timer = System.Timers.Timer;
