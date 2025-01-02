@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Linq;
-using HelmerDemo.BlazorServer.Application.Handlers;
+using HelmerDemo.BlazorServer.Application.Observables;
 using Microsoft.AspNetCore.Components;
+using ErrorEventArgs = HelmerDemo.BlazorServer.Application.Observables.ErrorEventArgs;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
@@ -26,7 +27,7 @@ public partial class CounterEv : ComponentBase, IDisposable
 	/// </summary>
 	protected string ErrorMessage = "You hit the maximum value";
 
-	private CounterHandler _eventDemo;
+	private CounterObservable _eventDemo;
 
 	/// <summary>
 	/// Add 1 to the count, until max value
@@ -50,7 +51,7 @@ public partial class CounterEv : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			_eventDemo = new CounterHandler();
+			_eventDemo = new CounterObservable();
 			_eventDemo.Progressing += OnTimeUpdated;
 			_eventDemo.Finished += OnFinished;
 			_eventDemo.Errored += OnError;
@@ -96,7 +97,7 @@ public partial class CounterEv : ComponentBase, IDisposable
 		InvokeAsync(StateHasChanged);
 	}
 
-	private void OnError(object? sender, Application.Handlers.ErrorEventArgs errorEventArgs)
+	private void OnError(object? sender, ErrorEventArgs errorEventArgs)
 	{
 		ErrorStyle = "text-danger";
 		ErrorMessage = errorEventArgs.Error.Message;

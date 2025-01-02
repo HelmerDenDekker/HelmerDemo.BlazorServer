@@ -8,4 +8,9 @@ public class CountProgress
 	{
 		Value = value;
 	}
+	
+	public void Increment()
+	{
+		Value++;
+	}
 }

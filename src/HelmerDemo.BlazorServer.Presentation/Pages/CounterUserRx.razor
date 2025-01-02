@@ -1,0 +1,19 @@
+﻿@page "/counteruserrx"
+
+@{
+	this.MaxValue = 20;
+}
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p>This demonstrates the use ReactiveX to have the counter in sync for one user in multiple tabs.</p>
+
+@if (CurrentCount >= MaxValue)
+{
+	<p role="status" class="@ErrorStyle">@ErrorMessage</p>
+}
+<p role="status" class="@ErrorStyle">Current count: @CurrentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>

@@ -1,7 +1,7 @@
 using HelmerDemo.BlazorServer.Application.Interfaces;
 using HelmerDemo.BlazorServer.Application.Observables;
-using HelmerDemo.BlazorServer.Application.Providers;
 using HelmerDemo.BlazorServer.Application.Reactive;
+using HelmerDemo.BlazorServer.Application.Services;
 using HelmerDemo.BlazorServer.Presentation.JsInterop;
 using HelmerDemo.BlazorServer.Presentation.JsInterop.Contracts;
 using HelmerDemo.BlazorServer.Shared.Tools.Models;

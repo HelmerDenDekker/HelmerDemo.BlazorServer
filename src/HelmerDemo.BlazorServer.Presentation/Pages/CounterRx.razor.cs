@@ -1,4 +1,4 @@
-﻿using HelmerDemo.BlazorServer.Application.Handlers;
+﻿using HelmerDemo.BlazorServer.Application.Reactive;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
@@ -26,20 +26,22 @@ public partial class CounterRx: ComponentBase, IDisposable
 	protected string ErrorMessage = "You hit the maximum value";
 
 	private IDisposable? _subscription;
+	
+	private CounterIndividualStream? _individualStream;
 
 	/// <summary>
 	/// Add 1 to the count, until max value
 	/// </summary>
 	protected void IncrementCount()
 	{
-		if(CurrentCount < MaxValue)
-			CurrentCount++;
-		else
+		if (CurrentCount >= MaxValue)
 		{
-			ErrorStyle = "text-danger";
-			//Finish the events
-			Dispose();
+			OnFinished();
+			return;
 		}
+			
+
+		CurrentCount++;
 	}
 
 	/// <summary>
@@ -50,9 +52,8 @@ public partial class CounterRx: ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			var eventDemo = new CounterSubject();
-			var observable = eventDemo.Start(MaxValue);
-			_subscription = observable.Subscribe(
+			_individualStream = new CounterIndividualStream(MaxValue);
+			_subscription = _individualStream.WhenSecondPassed.Subscribe(
 				p => OnTimeUpdated(),
 				e => OnError(e.Message),
 				() => OnFinished());
@@ -67,6 +68,7 @@ public partial class CounterRx: ComponentBase, IDisposable
 	public void Dispose()
 	{
 		_subscription?.Dispose();
+		_individualStream?.Dispose();
 	}
 
 	/// <summary>
@@ -85,6 +87,8 @@ public partial class CounterRx: ComponentBase, IDisposable
 	{
 		ErrorStyle = "text-danger";
 		ErrorMessage = "Count Dracula has finished counting";
+		_subscription?.Dispose();
+		_individualStream?.Dispose();
 		InvokeAsync(StateHasChanged);
 	}
 
@@ -92,6 +96,8 @@ public partial class CounterRx: ComponentBase, IDisposable
 	{
 		ErrorStyle = "text-danger";
 		ErrorMessage = errorMessage;
+		_subscription?.Dispose();
+		_individualStream?.Dispose();
 		InvokeAsync(StateHasChanged);
 	}
 }
