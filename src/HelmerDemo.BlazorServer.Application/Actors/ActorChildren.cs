@@ -3,14 +3,13 @@ using Serilog;
 
 namespace HelmerDemo.BlazorServer.Application.Actors;
 
-// TODO: Instead of T, use IActor
 public class ActorChildren<T> : IActorChildren<T>  where T : class
 {
 	public ConcurrentDictionary<Guid, T> Children { get; } = new();
 	
-	public void Add(Guid id, T model)
+	public void Add(Guid id, T actor)
 	{
-		if (!Children.TryAdd(id, model))
+		if (!Children.TryAdd(id, actor))
 			Log.Error("{name}Store, Add: key {id} already exists", nameof(T), id);
 	}
 

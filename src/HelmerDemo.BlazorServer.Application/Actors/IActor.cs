@@ -18,18 +18,21 @@ public interface IActor : IActorChildren<IActor>
 	// Receive a message from an actor by subscribing to the IObservable<T>
 	// Process a message
 	
-	// TODO: How to send a message to an actor? 
-	
-	
-	// Restart the actor
-	
-	// Stop the actor
-	
-	// Dispose the actor
-	
+	/// <summary>
+	/// Send a message to an actor
+	/// </summary>
+	/// <param name="action"></param>
+	public void Post(ActorAction action);
+
+	// Restart the actor = POST Action
+
+	// Stop the actor = POST Action => stop children, stop and Dispose
+
+	// Dispose the actor = POST Action => dispose Children, stop and Dispose 
+
 	// Actor State
-	
+
 	// Monitor the (child) actor
-	
+
 	// This is a lot!! What about single responsibility? => An actor is split up in multiple parts in Akka.NET.
 }

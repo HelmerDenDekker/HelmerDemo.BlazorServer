@@ -18,13 +18,11 @@ public class RootActor : ActorChildren<IActor>, IActor
 		Process(); // self start processing. It is a stream. 
 	}
 	
-	// TODO: I need an IActor of T for DI
-	
 	private readonly Subject<ActorAction> _newActionSubject = new();
 	
 	public Guid Address { get; } = Guid.NewGuid();
 	
-	public string Name { get; } = "Root";
+	public string Name { get; } = "root";
 
 	
 	public IObservable<ActorAction> WhenNewMessageSent => _newActionSubject;
@@ -45,17 +43,14 @@ public class RootActor : ActorChildren<IActor>, IActor
 		CreateNewUserActor(action));
 	}
 	
-	
-
-	
 
 	// LOGIC
 	
 	// private rules here... TODO: somewhere I can test them
 
-	public void CreateNewUserActor(ActorAction action)
+	private void CreateNewUserActor(ActorAction action)
 	{
-		
+		// TODO Add new user actor
 	}
 
 	// TODO: Oncompleted and OnError. Self-healing business. these are rules as well.

@@ -26,30 +26,32 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 	// TODO: Inject the RootActor
 	[Inject]
 	public RootActor MyRootActor { get; set; } = default!;
+	
+	public UserActor? MyUserActor { get; set; } = default!;
 
 	private UserSessionViewModel UserSessionContent { get; set; } = new UserSessionViewModel();
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
+	protected override void OnAfterRender(bool firstRender)
 	{
 		if (firstRender)
 		{
-			// TODO: If a localstorage is not available in the browser .... => what to do?
+			// TODO: If a localstorage is not available in the browser .... => Solve this in your LocalStorageProvider
 
-			var observable = Observable.FromAsync(() => LocalStorageProvider.GetAsync<UserSessionKey>("helmerdemo-blazor-session"));
+			var getFromLocalStorage = Observable.FromAsync(() => LocalStorageProvider.GetAsync<UserSessionKey>("helmerdemo-blazor-session"));
 			
-			observable.Subscribe(content => InitializeAsync(content),
+			getFromLocalStorage.Subscribe(content => Initialize(content),
 				onError: ex => HandleError(ex),
 				() => Log.Information("Get Completed"));
 		}
 
-		await base.OnAfterRenderAsync(firstRender);
+		base.OnAfterRender(firstRender);
 	}
 
-	private void InitializeAsync(Result<UserSessionKey> userSession)
+	private void Initialize(Result<UserSessionKey> userSession)
 	{
 		// Rules =>  Action
 
-		// 1: No Id found => show child (AskQuestion)
+		// 1: No Id found => show child (AskQuestion) and set UserId
 		var notFoundRule = userSession.StatusCode.Equals(HttpStatusCode.NotFound);
 		if (notFoundRule)
 		{
@@ -62,14 +64,17 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 		{
 			
 			var userActor = MyRootActor.FindById(userSession.Value.UserId);
-			 
+			
+			// I can have the logic in here, because this class is only triggered once per user, and only after first render.
+            // Rule: if not in store => Delete from LocalStorage, and set new.
+			
+			
+			// Rule: if in store => Update UserState to ChildContent
 			UpdateState(UserSessionState.Active);
 			return;
 		}
 		
-		// I can have the logic in here, because this class is only triggered once per user, and only after first render.
-		// Rule: if not in store => Delete from LocalStorage (or return false result, in order to trigger delete)
-		// Rule: if in store => Update UserSessionState to ChildContent (or return true)
+		
 		
 		
 
