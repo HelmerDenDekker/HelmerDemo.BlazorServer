@@ -1,6 +1,8 @@
 using System.Net;
 using System.Reactive.Linq;
 using System.Security.Cryptography;
+using HelmerDemo.BlazorServer.Application.Actors;
+using HelmerDemo.BlazorServer.Application.Reactive;
 using HelmerDemo.BlazorServer.Presentation.JsInterop.Contracts;
 using HelmerDemo.BlazorServer.Presentation.ViewModel;
 using HelmerDemo.BlazorServer.Shared.Tools;
@@ -20,6 +22,10 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 
 	[Inject]
 	public NavigationManager MyNavigationManager { get; set; } = default!;
+	
+	// TODO: Inject the RootActor
+	[Inject]
+	public RootActor MyRootActor { get; set; } = default!;
 
 	private UserSessionViewModel UserSessionContent { get; set; } = new UserSessionViewModel();
 
@@ -43,8 +49,7 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 	{
 		// Rules =>  Action
 
-		// TODO: 1: No Id found => show child (AskQuestion)
-		// 
+		// 1: No Id found => show child (AskQuestion)
 		var notFoundRule = userSession.StatusCode.Equals(HttpStatusCode.NotFound);
 		if (notFoundRule)
 		{
@@ -52,21 +57,28 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 			return;
 		}
 
-		//
-		// TODO: 3: Id found => Call the UserSessionActor to validate Id
+		// 3: Id found => Call the UserSessionActor to validate Id
 		if (userSession.IsSuccess)
 		{
-			// TODO: Call the UserSessionActor to validate Id
+			
+			var userActor = MyRootActor.FindById(userSession.Value.UserId);
+			 
 			UpdateState(UserSessionState.Active);
 			return;
 		}
+		
+		// I can have the logic in here, because this class is only triggered once per user, and only after first render.
+		// Rule: if not in store => Delete from LocalStorage (or return false result, in order to trigger delete)
+		// Rule: if in store => Update UserSessionState to ChildContent (or return true)
+		
+		
 
 		ShowErrorPage("Another error while looking for Id");
 	}
 
 	private void HandleError(Exception ex)
 	{
-		// TODO: 2: In case of a cryptographic-error => remove the stored data, show AskQuestion
+		// 2: In case of a cryptographic-error => remove the stored data, show AskQuestion
 		if (ex.GetType() == typeof(CryptographicException))
 		{
 			var deleteLocalStore = Observable.FromAsync(() => LocalStorageProvider.DeleteAsync("helmerdemo-blazor-session").AsTask());

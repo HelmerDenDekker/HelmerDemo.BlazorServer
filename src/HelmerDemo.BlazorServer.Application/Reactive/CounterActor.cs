@@ -4,7 +4,7 @@ using HelmerDemo.BlazorServer.Application.Domain;
 
 namespace HelmerDemo.BlazorServer.Application.Reactive;
 
-public class CounterRxActor : IDisposable
+public class CounterActor : IDisposable
 {
 	private readonly int _maxCount;
 	private readonly IDisposable? _subscription;
@@ -14,7 +14,7 @@ public class CounterRxActor : IDisposable
 
 	public IObservable<CountProgress> WhenCounterChanged => _counterChangedSubject;
 
-	public CounterRxActor(int max)
+	public CounterActor(int max)
 	{
 		_maxCount = max;
 		// Source

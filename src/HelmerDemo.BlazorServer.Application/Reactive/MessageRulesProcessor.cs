@@ -18,7 +18,7 @@ public class MessageRulesProcessor : IDisposable
 		_messageBoxStream = messageBoxStream;
 	}
 	
-	// TODO: These rules should be registered somewhere. A "BUS" or something like that.
+	// TODO: These rules should be registered to the actor.
 
 	/// <summary>
 	/// When the user starts composing a message, start a new message in the stream
@@ -32,7 +32,7 @@ public class MessageRulesProcessor : IDisposable
 		_firstValidContentSubscription = firstValidContentStream.Subscribe(m=> {
 			if (m.Count == 2 && m[0].Content.IsNullOrWhiteSpace() && !m[1].Content.IsNullOrWhiteSpace())
 			{
-				// Update CreatedAt
+				// ToDo: Update CreatedAt
 				
 			}
 		});
