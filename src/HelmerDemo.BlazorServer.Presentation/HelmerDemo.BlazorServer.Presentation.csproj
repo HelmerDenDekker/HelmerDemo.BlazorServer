@@ -20,8 +20,4 @@
     <ProjectReference Include="..\HelmerDemo.BlazorServer.Shared.Tools\HelmerDemo.BlazorServer.Shared.Tools.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
-
 </Project>

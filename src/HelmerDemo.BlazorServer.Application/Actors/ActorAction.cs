@@ -2,12 +2,15 @@
 
 public class ActorAction
 {
-	public ActorAction(Guid address, string name, string action)
+	public ActorAction(string action, string name, Guid address, string value = null)
 	{
 		Address = address;
 		ActorName = name;
 		Action = action;
+		Value = value;
 	}
+	
+	
 	
 	public Guid Address { get; set; }
 	
@@ -16,4 +19,6 @@ public class ActorAction
 	
 	// TODO - this should be an enum preferably
 	public string Action { get; set; }
+	
+	public string Value { get; set; }
 }

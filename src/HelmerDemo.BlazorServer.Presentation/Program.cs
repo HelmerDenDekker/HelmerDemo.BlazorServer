@@ -23,6 +23,8 @@ static void AddServices(WebApplicationBuilder builder)
 	builder.Services.AddDataProtection();
 	builder.Services.AddSingleton<WeatherForecastService>();
 	builder.Services.AddSingleton<IMessageBoxStream, MessageBoxStream>();
+	builder.Services.AddSingleton<IRootActorStream, RootActorStream>();
+	builder.Services.AddSingleton<RootActor>();
 	builder.Services.AddScoped<ILocalStorageProvider, LocalStorageProvider>();
 	// Add services to the container.
 	builder.Services.AddRazorPages();

@@ -3,7 +3,7 @@
 /// <summary>
 /// https://en.wikipedia.org/wiki/Actor_model
 /// </summary>
-public interface IActor : IActorChildren<IActor>
+public interface IActor
 {
 	/// <summary>
 	/// An actor has a unique identifier or Address (like a mailbox)

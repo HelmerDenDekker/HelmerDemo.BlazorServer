@@ -1,14 +1,15 @@
-﻿using HelmerDemo.BlazorServer.Application.Reactive;
+﻿using System.Reactive.Linq;
+using HelmerDemo.BlazorServer.Application.Actors;
+using HelmerDemo.BlazorServer.Application.Domain;
+using HelmerDemo.BlazorServer.Application.Reactive;
+using HelmerDemo.BlazorServer.Presentation.Components;
+using HelmerDemo.BlazorServer.Presentation.ViewModel;
 using Microsoft.AspNetCore.Components;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
 public partial class CounterUserRx: ComponentBase, IDisposable
 {
-	/// <summary>
-	/// Buffer to keep track of count
-	/// </summary>
-	protected int CurrentCount = 0;
 
 	/// <summary>
 	/// The maximum value allowed as count size of the buffer
@@ -20,28 +21,22 @@ public partial class CounterUserRx: ComponentBase, IDisposable
 	/// </summary>
 	protected string ErrorStyle = "";
 
-	/// <summary>
-	/// Error message to inform the user the <see cref="MaxValue"/> was hit
-	/// </summary>
-	protected string ErrorMessage = "You hit the maximum value";
+	private CounterViewModel CounterContent = new();
 
 	private IDisposable? _subscription;
 	
-	private CounterIndividualStream? _individualStream;
+	[CascadingParameter]
+	private UserSessionProvider UserContainer { get; set; } = default!;
+	
+	private CounterActor? _counterActor;
+	private IDisposable _createdSubscription;
 
 	/// <summary>
 	/// Add 1 to the count, until max value
 	/// </summary>
 	protected void IncrementCount()
 	{
-		if (CurrentCount >= MaxValue)
-		{
-			OnFinished();
-			return;
-		}
-			
-
-		CurrentCount++;
+		_counterActor?.Post(new ActorAction("increment", "counter", Constants.CounterActorGuid));
 	}
 
 	/// <summary>
@@ -50,15 +45,43 @@ public partial class CounterUserRx: ComponentBase, IDisposable
 	/// <param name="firstRender"></param>
 	protected override void OnAfterRender(bool firstRender)
 	{
-		if (firstRender)
+		if (firstRender && _counterActor == null)
 		{
-			_individualStream = new CounterIndividualStream(MaxValue);
-			_subscription = _individualStream.WhenSecondPassed.Subscribe(
-				p => OnTimeUpdated(),
-				e => OnError(e.Message),
-				() => OnFinished());
+			// get counter actor from the user actor children
+			if (UserContainer.MyUserActor == null)
+			{
+				OnError("User actor not found");
+				return;
+			}
+
+			var actor = UserContainer.MyUserActor?.FindById(Constants.CounterActorGuid);
+				
+			var counterActor = (CounterActor)actor;
+
+			if (counterActor != null)
+			{
+				SetCounterActor(counterActor);
+			}
+			else
+			{
+				_createdSubscription = UserContainer.MyUserActor.WhenNewMessageSent.Where(act=>act.CreatedCounter() && act.Address == UserContainer.MyUserActor.Address).Subscribe(
+             					_ => SetCounterActor((CounterActor)UserContainer.MyUserActor?.FindById(Constants.CounterActorGuid)),
+             					e => OnError(e.Message),
+             					() => OnFinished());
+				UserContainer.MyUserActor?.Post(new ActorAction("set", "counter", UserContainer.MyUserActor.Address, "20"));
+				
+			}
 		}
 		base.OnAfterRender(firstRender);
+	}
+
+	private void SetCounterActor(CounterActor counterActor)
+	{
+		_counterActor = counterActor;
+		_subscription = _counterActor.WhenCounterChanged.Subscribe(
+			rxo => OnCounterUpdated(rxo),
+			e => OnError(e.Message),
+			() => OnFinished());
 	}
 
 		
@@ -67,37 +90,35 @@ public partial class CounterUserRx: ComponentBase, IDisposable
 	/// </summary>
 	public void Dispose()
 	{
+		UserContainer.MyUserActor?.Post(new ActorAction("delete", "counter", UserContainer.MyUserActor.Address));
 		_subscription?.Dispose();
-		_individualStream?.Dispose();
+		_counterActor?.Dispose();
+		_createdSubscription?.Dispose();
 	}
 
 	/// <summary>
-	/// The event listener, listening to ElapsedEventArgs
+	/// The event listener
 	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
-	private void OnTimeUpdated()
+	private void OnCounterUpdated(CounterRxo counterRxo)
 	{
-		IncrementCount();
-		// To make sure that the state is in sync on both client and server, add InvokeAsync(() => StateHasChanged()); to the timer interval callback
+		CounterContent.FromRxo(counterRxo);
 		InvokeAsync(StateHasChanged);
 	}
 	
 	private void OnFinished()
 	{
-		ErrorStyle = "text-danger";
-		ErrorMessage = "Count Dracula has finished counting";
+		ErrorStyle = "text-warning";
 		_subscription?.Dispose();
-		_individualStream?.Dispose();
+		_counterActor?.Dispose();
 		InvokeAsync(StateHasChanged);
 	}
 
 	private void OnError(string errorMessage)
 	{
 		ErrorStyle = "text-danger";
-		ErrorMessage = errorMessage;
+		CounterContent.ErrorMessage = errorMessage;
 		_subscription?.Dispose();
-		_individualStream?.Dispose();
+		_counterActor?.Dispose();
 		InvokeAsync(StateHasChanged);
 	}
 }

@@ -37,10 +37,20 @@ public class RootActor : ActorChildren<IActor>, IActor
 	/// <summary>
 	/// The Actor should process the incoming messages.
 	/// </summary>
-	public void Process()
+	internal void Process()
 	{
 		_rootActorStream.WhenActionUpdated.Where(act=>act.IsSetUser()).Subscribe(action =>
 		CreateNewUserActor(action));
+
+		_rootActorStream.WhenActionUpdated.Where(act => act.IsGetUser()).Subscribe(action =>
+			{
+			var userActor = FindById(action.Address);
+			if (userActor != null)
+				_newActionSubject.OnNext(new ActorAction("found", "user", action.Address));
+			else
+				_newActionSubject.OnNext(new ActorAction("not-found", "user", action.Address));
+			});
+
 	}
 	
 
@@ -50,7 +60,9 @@ public class RootActor : ActorChildren<IActor>, IActor
 
 	private void CreateNewUserActor(ActorAction action)
 	{
-		// TODO Add new user actor
+		var userActor = new UserActor(action.Address);
+		Children.TryAdd(userActor.Address, userActor);
+		_newActionSubject.OnNext(new ActorAction("created", "user", action.Address));
 	}
 
 	// TODO: Oncompleted and OnError. Self-healing business. these are rules as well.
