@@ -16,11 +16,6 @@ public partial class CounterUserRx: ComponentBase, IDisposable
 	/// </summary>
 	protected int MaxValue = 0;
 
-	/// <summary>
-	/// Visual style for errors (Demonstrates influencing styling from code-behind!)
-	/// </summary>
-	protected string ErrorStyle = "";
-
 	private CounterViewModel CounterContent = new();
 
 	private IDisposable? _subscription;
@@ -107,7 +102,7 @@ public partial class CounterUserRx: ComponentBase, IDisposable
 	
 	private void OnFinished()
 	{
-		ErrorStyle = "text-warning";
+		CounterContent.ErrorStyle = "text-warning";
 		_subscription?.Dispose();
 		_counterActor?.Dispose();
 		InvokeAsync(StateHasChanged);
@@ -115,7 +110,7 @@ public partial class CounterUserRx: ComponentBase, IDisposable
 
 	private void OnError(string errorMessage)
 	{
-		ErrorStyle = "text-danger";
+		CounterContent.ErrorStyle = "text-danger";
 		CounterContent.ErrorMessage = errorMessage;
 		_subscription?.Dispose();
 		_counterActor?.Dispose();

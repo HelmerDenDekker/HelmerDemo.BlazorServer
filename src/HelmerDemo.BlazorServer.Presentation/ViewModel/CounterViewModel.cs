@@ -6,6 +6,7 @@ internal class CounterViewModel
 {
 	public int CurrentCount { get; set; }
 	
+	public string ErrorStyle { get; set; } = "";
 	public string ErrorMessage { get; set; } = "";
 	
 	public bool Disabled => !string.IsNullOrWhiteSpace(ErrorMessage);

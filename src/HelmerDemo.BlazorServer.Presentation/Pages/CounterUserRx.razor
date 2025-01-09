@@ -2,7 +2,7 @@
 @using HelmerDemo.BlazorServer.Shared.Tools.Extensions
 
 @{
-	this.MaxValue = 20;
+	MaxValue = 20;
 }
 
 <PageTitle>Counter</PageTitle>
@@ -13,8 +13,8 @@
 
 @if (!CounterContent.ErrorMessage.IsNullOrEmpty())
 {
-	<p role="status" class="@ErrorStyle">@CounterContent.ErrorMessage</p>
+	<p role="status" class="@CounterContent.ErrorStyle">@CounterContent.ErrorMessage</p>
 }
-<p role="status" class="@ErrorStyle">Current count: @CounterContent.CurrentCount</p>
+<p role="status" class="@CounterContent.ErrorStyle">Current count: @CounterContent.CurrentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount" disabled="@CounterContent.Disabled">Click me</button>

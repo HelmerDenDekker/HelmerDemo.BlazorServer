@@ -15,6 +15,22 @@ public class LocalStorageProvider : ILocalStorageProvider
 		_localStorage = localStorage;
 	}
 
+	public async Task<bool> IsEnabled()
+	{
+		var key = "local-storage-enabled";
+		var id = "unique-id";
+		await _localStorage.SetAsync(key, id);
+		var result = await _localStorage.GetAsync<string>(key);
+		
+		if(result.Success && result.Value == id)
+		{
+			await _localStorage.DeleteAsync(key);
+			return true;
+		}
+
+		return false;
+	}
+
 	public async Task<Result<T>> GetAsync<T>(string key)
 	{
 		try
