@@ -65,32 +65,7 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 			Log.Debug("%%%%% User session found");
 			// TODO: Investigate if these subscriptions are disposed correctly
 			
-			_userFoundSubscription = RootContainer.MyRootActor.WhenNewMessageSent
-				.Where(act => act
-					.IsFoundUser() && act.Address == userSession.Value.UserId)
-				.Subscribe(action =>
-					{
-						// Rule: if in store => Update UserState to ChildContent
-					_userNotFoundSubscription.Dispose();
-					Initialize(action.Address);
-					}, onError: ex => HandleError(ex),
-					() => Log.Information("Found User Completed"));
-			
-			_userNotFoundSubscription = RootContainer.MyRootActor.WhenNewMessageSent
-				.Where(act => act
-					.UserNotFound() && act.Address == userSession.Value.UserId)
-				.Subscribe(action =>
-				{
-					// Rule: if not in store => Delete from LocalStorage, and set new.
-					_userFoundSubscription.Dispose();
-					var deleteFromLocalStorage = Observable.FromAsync(() => LocalStorageProvider.DeleteAsync("helmerdemo-blazor-session").AsTask());
-
-					deleteFromLocalStorage.Subscribe(content => CheckLocalStorageEnabled(),
-						onError: ex => HandleError(ex),
-						() => Log.Information("Delete User Completed"));
-				});
-			
-			RootContainer.MyRootActor.Post(new ActorAction("get", "user", userSession.Value.UserId));
+			Initialize(userSession.Value.UserId);
 			
 			return;
 		}
@@ -101,15 +76,17 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 	private void Initialize(Guid userId)
 	{
 		Log.Debug("%%%%% Initializing UserActor");
-		MyUserActor = RootContainer.MyRootActor.FindById(userId) as UserActor;
+		MyUserActor = RootContainer.MyRootActor.GetOrCreate(userId);
 		// I am doing this cascading shizzle like this. I am not sure if this is the right way to do it.
 		MyUserActor?.WhenNewMessageSent.Where(act=>act.CreatedCounter() && act.Address == userId).Subscribe(_ =>
 		{
 			// Rule: if in store => Update UserState to ChildContent
-			MyUserActor = RootContainer.MyRootActor.FindById(userId) as UserActor;
+			MyUserActor = RootContainer.MyRootActor.GetOrCreate(userId);
 			UpdateState(UserSessionState.Active);
 		});
+
 		UpdateState(UserSessionState.Active);
+		Log.Debug("%%%%% Done Initializing UserActor");
 	}
 
 	private void DisposeUserSubscriptions()
@@ -147,20 +124,20 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 
 		setLocalStorage.Subscribe(content =>
 			{
-				WaitForOthers(userSessionKey.UserId);
+				CheckUserId(userSessionKey.UserId);
 			},
 			onError: ex => HandleError(ex),
 			() => Log.Information("Set User Completed"));
 	}
 
 	// If the user opens multiple tabs or windows, and loads them all at once, it will spawn multiple Sets like gremlins in a pool. So wait for it!
-	private void WaitForOthers(Guid userId)
+	private void CheckUserId(Guid userId)
 	{
 		// Suppose we have four calls, with id 1,2,3,4. The last one setting the localstorage is the winner.
 		// I am going to wait and check if the id matches the last one set. I have no idea of the others existence sadly.
-		// 500.000 ticks = 50 ms
-		Log.Debug("%%%%% Waiting for others to finish");
-		var getObservable = Observable.FromAsync(() => LocalStorageProvider.GetAsync<UserSessionKey>("helmerdemo-blazor-session")).Delay(new TimeSpan(500000));
+		// 10.000 ticks = 1 ms
+		Log.Debug("%%%%% Checking for UserId {userId}", userId);
+		var getObservable = Observable.FromAsync(() => LocalStorageProvider.GetAsync<UserSessionKey>("helmerdemo-blazor-session")).Delay(new TimeSpan(100000));
 		
 		getObservable.Subscribe(content => MatchingId(content, userId),
 			onError: ex => HandleError(ex),
@@ -169,22 +146,24 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 
 	private void MatchingId(Result<UserSessionKey> content, Guid userId)
 	{
-		Log.Debug("%%%%% Matching the Ids");
+		Log.Debug("%%%%% Matching the Ids{userId}", userId);
 		// If I am a winner (my Id == last set Id), I will initialize the UserActor
 		if(content.IsSuccess && content.Value.UserId == userId)
 		{
-			WaitingForOnUserCreated(content.Value.UserId);
+			Log.Debug("%%%%% UserId {userId} matches", userId, content.Value.UserId);
+			Initialize(content.Value.UserId);
 			return;
 		}
 		
-		// if I am not the winner:
-		if(content.IsSuccess && content.StatusCode.Equals(HttpStatusCode.OK))
+		// if I am not the winner: Check if new is the last one set
+		if(content.IsSuccess)
 		{
-			// I am not the winner, I have to wait for the winner to initialize the UserActor (call Initialize).
-			var delayedInitialize = Observable.Timer(TimeSpan.FromMilliseconds(50));
-			delayedInitialize.Subscribe(_ => Initialize(userId));
+			Log.Debug("%%%%% UserId {userId} does not match {contentUserId}", userId, content.Value.UserId);
+			CheckUserId(content.Value.UserId);
 			return;
 		}
+		
+		Log.Debug("%%%%% Matching the Ids Derailed!");
 		var getObservable = Observable.FromAsync(() => LocalStorageProvider.GetAsync<UserSessionKey>("helmerdemo-blazor-session")).Delay(new TimeSpan(500000));
 		
 		getObservable.Subscribe(content => MatchingId(content, userId),
@@ -194,23 +173,7 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 		ShowErrorPage("Another error while looking for Id");
 		
 	}
-
-	private void WaitingForOnUserCreated(Guid userId)
-	{
-		Log.Debug("%%%%% Waiting for on UserCreated");
-		_userCreatedSubscription = RootContainer.MyRootActor.WhenNewMessageSent
-			.Where(act => act
-				.UserCreated() && act.Address == userId)
-			.Subscribe(action =>
-				{
-					Initialize(userId);
-				}, onError: ex => HandleError(ex),
-				() => Log.Information("Created Completed"));
-		RootContainer.MyRootActor.Post(new ActorAction("set", "user", userId));
-	}
-
 	
-
 	private void HandleError(Exception ex)
 	{
 		Log.Error(ex, "%%%%% Error in UserSessionProvider");

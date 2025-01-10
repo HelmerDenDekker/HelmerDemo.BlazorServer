@@ -34,4 +34,9 @@ public class UserActor : ActorChildren<IActor>, IActor
 			RemoveById(Constants.CounterActorGuid);
 		}
 	}
+	
+	public CounterActor? GetCounterActor()
+	{
+		return (CounterActor)FindById(Constants.CounterActorGuid);
+	}
 }

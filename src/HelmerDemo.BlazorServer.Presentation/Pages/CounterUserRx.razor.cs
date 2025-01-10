@@ -5,6 +5,7 @@ using HelmerDemo.BlazorServer.Application.Reactive;
 using HelmerDemo.BlazorServer.Presentation.Components;
 using HelmerDemo.BlazorServer.Presentation.ViewModel;
 using Microsoft.AspNetCore.Components;
+using Serilog;
 
 namespace HelmerDemo.BlazorServer.Presentation.Pages;
 
@@ -45,22 +46,24 @@ public partial class CounterUserRx: ComponentBase, IDisposable
 			// get counter actor from the user actor children
 			if (UserContainer.MyUserActor == null)
 			{
+				Log.Error("%%%%% User actor not found");
+				// TODO Has to wait until UserActor is created
 				OnError("User actor not found");
 				return;
 			}
 
-			var actor = UserContainer.MyUserActor?.FindById(Constants.CounterActorGuid);
+			var actor = UserContainer.MyUserActor?.GetCounterActor();
 				
-			var counterActor = (CounterActor)actor;
+			
 
-			if (counterActor != null)
+			if (actor != null)
 			{
-				SetCounterActor(counterActor);
+				SetCounterActor(actor);
 			}
 			else
 			{
 				_createdSubscription = UserContainer.MyUserActor.WhenNewMessageSent.Where(act=>act.CreatedCounter() && act.Address == UserContainer.MyUserActor.Address).Subscribe(
-             					_ => SetCounterActor((CounterActor)UserContainer.MyUserActor?.FindById(Constants.CounterActorGuid)),
+             					_ => SetCounterActor(UserContainer.MyUserActor.GetCounterActor()),
              					e => OnError(e.Message),
              					() => OnFinished());
 				UserContainer.MyUserActor?.Post(new ActorAction("set", "counter", UserContainer.MyUserActor.Address, "20"));

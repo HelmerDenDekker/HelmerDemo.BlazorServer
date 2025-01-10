@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using HelmerDemo.BlazorServer.Application.Actors;
+using Serilog;
 
 namespace HelmerDemo.BlazorServer.Application.Reactive;
 
@@ -39,18 +40,25 @@ public class RootActor : ActorChildren<IActor>, IActor
 	/// </summary>
 	internal void Process()
 	{
-		_rootActorStream.WhenActionUpdated.Where(act=>act.IsSetUser()).Subscribe(action =>
-		CreateNewUserActor(action));
+		
+	}
 
-		_rootActorStream.WhenActionUpdated.Where(act => act.IsGetUser()).Subscribe(action =>
-			{
-			var userActor = FindById(action.Address);
-			if (userActor != null)
-				_newActionSubject.OnNext(new ActorAction("found", "user", action.Address));
-			else
-				_newActionSubject.OnNext(new ActorAction("not-found", "user", action.Address));
-			});
-
+	// simplified version of the generic implementation
+	public UserActor GetOrCreate(Guid id)
+	{
+		var userActor = FindById(id) as UserActor;
+		if(userActor!=null)
+			return userActor;
+		
+		if(userActor == null)
+		{
+			userActor = new UserActor(id);
+			var success = Children.TryAdd(userActor.Address, userActor);
+			if(success)
+				return userActor;
+		}
+		Log.Error("UserActor not added to Dictionary");
+		return null;
 	}
 	
 

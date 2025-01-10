@@ -19,7 +19,7 @@ public class ActorChildren<T>  where T : class
 			Log.Error("{name}Store, RemoveById: key {id} not found", nameof(T), id);
 	}
 
-	public T? FindById(Guid id)
+	internal T? FindById(Guid id)
 	{
 		var isRetrieved = Children.TryGetValue(id, out var model);
 		return isRetrieved ? model : null;
