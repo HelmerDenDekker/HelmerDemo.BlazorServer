@@ -47,18 +47,14 @@ public class RootActor : ActorChildren<IActor>, IActor
 	public UserActor GetOrCreate(Guid id)
 	{
 		var userActor = FindById(id) as UserActor;
+		
 		if(userActor!=null)
 			return userActor;
 		
-		if(userActor == null)
-		{
-			userActor = new UserActor(id);
-			var success = Children.TryAdd(userActor.Address, userActor);
-			if(success)
-				return userActor;
-		}
-		Log.Error("UserActor not added to Dictionary");
-		return null;
+		userActor = new UserActor(id);
+		Add(userActor.Address, userActor);
+		
+		return userActor;
 	}
 	
 

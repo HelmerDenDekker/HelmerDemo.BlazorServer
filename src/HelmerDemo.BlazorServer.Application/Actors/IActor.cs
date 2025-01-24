@@ -23,6 +23,9 @@ public interface IActor
 	/// </summary>
 	/// <param name="action"></param>
 	public void Post(ActorAction action);
+	
+	// New and better idea for sending.
+	//public void Send<T>(Guid to, T message);
 
 	// Restart the actor = POST Action
 

@@ -36,8 +36,6 @@ public partial class UserSessionProvider : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			// TODO: If a localstorage is not available in the browser .... => Solve this in your LocalStorageProvider
-
 			var getFromLocalStorage = Observable.FromAsync(() => LocalStorageProvider.GetAsync<UserSessionKey>("helmerdemo-blazor-session"));
 
 			getFromLocalStorage.Subscribe(content => ProcessLocalId(content),

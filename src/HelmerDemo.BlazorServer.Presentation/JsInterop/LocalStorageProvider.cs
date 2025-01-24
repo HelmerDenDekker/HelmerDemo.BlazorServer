@@ -21,8 +21,8 @@ public class LocalStorageProvider : ILocalStorageProvider
 		var id = "unique-id";
 		await _localStorage.SetAsync(key, id);
 		var result = await _localStorage.GetAsync<string>(key);
-		
-		if(result.Success && result.Value == id)
+
+		if (result.Success && result.Value == id)
 		{
 			await _localStorage.DeleteAsync(key);
 			return true;
